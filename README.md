@@ -5,17 +5,17 @@ you find out, and keeps the proof.
 
 New York City launched Big Apple Connect
 ["to ensure that NYCHA residents have access to free, fast, reliable, and safe internet."](https://access.nyc.gov/programs/big-apple-connect/)
-We share that goal. A promise like that is worth checking, and the place to
+I share that goal. A promise like that is worth checking, and the place to
 check it is inside the home, where people use the connection.
 
-> **This is an independent project.** It is not affiliated with, endorsed by
-> or run by the City of New York, NYCHA, or any internet provider. It is named
-> for the program it was built to measure. We hope it will be useful to the
-> city, and would welcome working with it.
+> **This is an independent, personal project.** It is not affiliated with,
+> endorsed by or run by the City of New York, NYCHA, or any internet provider.
+> It is named for the program it was built to measure. I hope it will be
+> useful to the city, and would welcome working with it.
 
 ## The vision
 
-We are building three ways to measure a home connection, so there is one for
+I am building three ways to measure a home connection, so there is one for
 everyone:
 
 1. **A box for the home.** A small, low-cost computer that plugs into the
@@ -27,7 +27,7 @@ everyone:
 3. **A website for a quick check.** Nothing to install. Open a page and test
    your connection right away.
 
-Together, we hope they do two things:
+Together, I hope they do two things:
 
 - **Keep internet providers accountable.** Give households, advocates and the
   city clear evidence of what a connection delivers, beside what was promised.
