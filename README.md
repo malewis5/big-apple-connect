@@ -1,102 +1,140 @@
 # big-apple-connect-box
 
-An independent, open-source measurement box for home internet in New York
-City.
+Measures a home internet connection and keeps the results as evidence anyone
+can check.
 
-Big Apple Connect is New York City's program that provides free home internet
-to residents of NYCHA public housing. This project is building a small box,
-and a matching app, that sits in a home and records how the internet
-connection there performs: its speed, its delay and its reliability, kept as
-evidence that anyone can check. The aim is for households, and the people who
-run programs like Big Apple Connect, to be able to see what a connection
-delivers.
+Big Apple Connect is New York City's program that gives free home internet to
+residents of NYCHA public housing. This project is building a small box, and a
+matching app, that sits in a home and records what the connection there
+delivers: its speed, its delay and its reliability.
 
 > **This is an independent project.** It is not affiliated with, endorsed by
-> or operated by the City of New York, NYCHA, or any internet provider. It
-> carries the name of the program it was built to measure. We hope it will be
-> useful to the city, and would welcome working with it.
+> or run by the City of New York, NYCHA, or any internet provider. It is named
+> for the program it was built to measure. We hope it will be useful to the
+> city, and would welcome working with it.
 
-## What this repository is
+This repository holds the collector: the one program that runs on the box, or
+on a volunteer's own computer, and does the measuring.
 
-The collector: the program that runs on the box and collects evidence about a
-home internet connection.
+## Quick start
 
-One Go program does the collecting. It runs on a dedicated box plugged into the
-router, and as an app on a volunteer's own computer. Every scan records two
-things together:
+Download the program and run one scan. Pick your system.
+
+**Raspberry Pi** (64-bit)
+
+```sh
+curl -L -o big-apple-connect-box https://github.com/malewis5/big-apple-connect-box/releases/latest/download/big-apple-connect-box_linux_arm64
+chmod +x big-apple-connect-box
+./big-apple-connect-box
+```
+
+**Linux**
+
+```sh
+curl -L -o big-apple-connect-box https://github.com/malewis5/big-apple-connect-box/releases/latest/download/big-apple-connect-box_linux_amd64
+chmod +x big-apple-connect-box
+./big-apple-connect-box
+```
+
+**macOS** (Apple silicon; for an Intel Mac, replace `arm64` with `amd64`)
+
+```sh
+curl -L -o big-apple-connect-box https://github.com/malewis5/big-apple-connect-box/releases/latest/download/big-apple-connect-box_darwin_arm64
+chmod +x big-apple-connect-box
+./big-apple-connect-box
+```
+
+**Windows** (PowerShell)
+
+```powershell
+curl.exe -L -o big-apple-connect-box.exe https://github.com/malewis5/big-apple-connect-box/releases/latest/download/big-apple-connect-box_windows_amd64.exe
+.\big-apple-connect-box.exe
+```
+
+A scan takes about a minute. It prints what it found and saves it to
+`evidence.db` in the current folder.
+
+## Usage
+
+```sh
+./big-apple-connect-box               # one full scan
+./big-apple-connect-box -kind light   # one light scan, about 10 seconds
+./big-apple-connect-box -daemon       # keep running: light every 5 minutes, full every hour
+./big-apple-connect-box -version      # print the version
+```
+
+## What a scan records
+
+Every scan records two things together:
 
 - **The setup:** what the connection is. Cable or Wi-Fi, the router and modem,
   the provider.
-- **The measurements:** how the connection performs. These follow
-  [Netrics](https://github.com/internet-innovation/netrics), the open-source
-  software used in the University of Chicago's home broadband study.
+- **The measurements:** how the connection performs.
 
-The program records what it did and what came back, and stores it in a local
-SQLite database, `evidence.db`, in the directory it is run from.
-
-## Install
-
-Each [release](https://github.com/malewis5/big-apple-connect-box/releases) has the
-program for Raspberry Pi and other 64-bit ARM Linux (`linux_arm64`), Linux
-(`linux_amd64`), Windows (`windows_amd64`) and macOS (`darwin_arm64`,
-`darwin_amd64`), with a `checksums.txt` of their SHA-256 sums. To check a
-download against it:
-
-```sh
-sha256sum --check --ignore-missing checksums.txt
-```
-
-With Go installed:
-
-```sh
-go install github.com/malewis5/big-apple-connect-box/cmd/big-apple-connect-box@latest
-```
-
-`big-apple-connect-box -version` prints the version the program was built from.
-
-Releases published while the repository is public carry a build attestation:
-a signed record, kept by GitHub, that the file was built by this repository's
-release workflow from a specific commit. To verify a download with the
-[GitHub CLI](https://cli.github.com):
-
-```sh
-gh attestation verify big-apple-connect-box_linux_arm64 --repo malewis5/big-apple-connect-box
-```
-
-## Run
-
-From a checkout:
-
-```sh
-go run ./cmd/big-apple-connect-box                # one full scan, printed and saved
-go run ./cmd/big-apple-connect-box -kind light    # one light scan
-go run ./cmd/big-apple-connect-box -daemon        # keep running: light every 5 minutes, full every hour
-go test ./...
-```
-
-Build for each system from any one machine:
-
-```sh
-CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build -o dist/big-apple-connect-box-linux-arm64       ./cmd/big-apple-connect-box   # the box
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/big-apple-connect-box-windows-amd64.exe ./cmd/big-apple-connect-box
-CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build -o dist/big-apple-connect-box-darwin-arm64      ./cmd/big-apple-connect-box
-```
-
-## What a scan does
-
-| Step | Light (every 5 min) | Full (hourly) |
+| Step | Light | Full |
 |---|---|---|
-| Connection: interface, cable or Wi-Fi, wired link speed | Yes | Yes |
-| Provider: public address and who it is registered to | | Yes |
-| Router and modem: maker, model, serial, as they report it | | Yes |
+| Connection: cable or Wi-Fi, link speed | Yes | Yes |
 | Route out, and the provider's first stop | Yes | Yes |
 | Ping: router, provider's first stop, three internet points | Yes | Yes |
 | Name lookup times | Yes | Yes |
-| NDT7 speed test, with router pings and processor load during it | | Yes |
-| Wi-Fi radio details, read after the measurements | Yes | Yes |
+| Wi-Fi signal, channel and rate | Yes | Yes |
+| Provider: public address and who it is registered to | | Yes |
+| Router and modem: maker, model, serial number | | Yes |
+| Speed test, with router pings and processor load during it | | Yes |
 
-The schedule, ping settings, last-mile rule, name-lookup server and NDT7 speed
-test are Netrics'.
+## Common problems
+
+**macOS or Windows warns that the program is from an unknown developer.**
+The program is not code-signed, and both systems warn about unsigned programs
+downloaded with a browser. The commands in [Quick start](#quick-start)
+download without a browser, which avoids the warning. If you used a browser:
+
+- macOS: run `xattr -d com.apple.quarantine ./big-apple-connect-box`
+- Windows: choose **More info**, then **Run anyway**
+
+To confirm the file is genuine first, see [Verify a download](#verify-a-download).
+
+**The route trace fails on Linux with `"traceroute": executable file not found`.**
+Install it, then scan again:
+
+```sh
+sudo apt install traceroute
+```
+
+**The router's hardware address is missing on macOS.**
+macOS returns `no entry` for it to programs Apple did not sign. The scan
+records that response and continues.
+
+Found something else? [Open an issue](https://github.com/malewis5/big-apple-connect-box/issues).
+
+## Verify a download
+
+Each [release](https://github.com/malewis5/big-apple-connect-box/releases)
+includes `checksums.txt`, the SHA-256 sum of every file. Download it and look
+up the program's sum in it:
+
+```sh
+curl -L -O https://github.com/malewis5/big-apple-connect-box/releases/latest/download/checksums.txt
+grep "$(shasum -a 256 big-apple-connect-box | cut -d' ' -f1)" checksums.txt
+```
+
+A genuine file prints its line from `checksums.txt`. On Windows, compare the
+output of `Get-FileHash big-apple-connect-box.exe` with the file by eye.
+
+Each file also has a build attestation: a signed record, kept by GitHub, that
+it was built by this repository's release workflow from a specific commit.
+Check it with the [GitHub CLI](https://cli.github.com):
+
+```sh
+gh attestation verify big-apple-connect-box --repo malewis5/big-apple-connect-box
+```
+
+## How it measures
+
+The measurements follow
+[Netrics](https://github.com/internet-innovation/netrics), the open-source
+software used in the University of Chicago's home broadband study. The
+schedule, settings and result names match, so results can be compared.
 
 | Measurement | Method |
 |---|---|
@@ -104,32 +142,20 @@ test are Netrics'.
 | Last mile | Trace the route to `1.1.1.1`, then ping the first stop outside the home network |
 | Name lookup | Time one lookup of each of five site names against `8.8.8.8` |
 | Hops | Count the stops to `1.1.1.1` |
-| Speed | NDT7 download and upload against an M-Lab server |
+| Speed | NDT7, M-Lab's open speed test: download, then upload |
 
-The program adds one measurement to Netrics' set: it pings the router, idle and
-during each phase of the speed test.
+One measurement is added to Netrics' set: the router is pinged too, both idle
+and during each half of the speed test.
 
-## Layout
+## The database
 
-```
-cmd/big-apple-connect-box/    the command: flags, schedule, printed report
-internal/collector/       the scan
-    collector.go              scan, probe and observation types; scan order
-    recorder.go               recording probes; running commands and reading files
-    platform.go               what each operating system must provide
-    darwin.go                 macOS commands and readers
-    linux.go                  Linux commands and readers
-    windows.go                Windows commands and readers
-    setup.go                  provider, router and modem
-    measure.go                route, ping, name lookup, speed test
-internal/store/           the SQLite schema and saving a scan
-```
+`evidence.db` is a [SQLite](https://sqlite.org) file with three tables.
 
-Each step has two halves. One runs a command or makes a request. The other is
-a function from the text that came back to observations. The second half is
-what the tests cover, using sample output from macOS, Linux and Windows.
-
-## Database
+- A **scan** is one run.
+- A **probe** is one thing the program did: a command run, a page requested, a
+  test performed. Every probe has a row with its start time, finish time and
+  any error returned.
+- An **observation** is one fact read from a probe's response.
 
 ```mermaid
 erDiagram
@@ -167,26 +193,20 @@ erDiagram
     }
 ```
 
-- A **scan** is one run.
-- A **probe** is one thing the program did: a command run, a page requested, a
-  test performed. Every probe has a row with its start time, finish time and
-  any error returned. A probe can hold both observations and an error, as when
-  a router sends its whole page and then leaves the response open.
-- An **observation** is one fact read from a probe's response.
-
-A router ping taken during the speed test points at the speed-test probe
-through `concurrent_with_probe_id`.
-
-Every observation `value` and `raw`, and every probe `output` and `error`, is
-what the operating system, the network or the equipment returned. Three values
-are produced by the program:
+**Stored values are what was returned.** Every observation `value` and `raw`,
+and every probe `output` and `error`, is what the operating system, the network
+or the equipment sent back. Three values are produced by the program:
 
 - `scans.connection_type` is the program's translation of the operating
   system's own word, which is stored beside it as the `interface_type`
-  observation. The database accepts `Ethernet`, `WiFi` and `Unknown`.
+  observation.
 - Name-lookup times are timed by the program. Their `raw` is empty.
 - Speed-test results are computed from counters the test reports, the same way
   M-Lab's own client computes them. Their `raw` holds those counters.
+
+A probe can hold both observations and an error, as when a router sends its
+whole page and then leaves the response open. A router ping taken during the
+speed test points at the speed-test probe through `concurrent_with_probe_id`.
 
 ### Subjects and attributes
 
@@ -198,19 +218,15 @@ are produced by the program:
 | `modem` | The modem | `http_status`, `manufacturer`, `model_name`, `model_number`, `serial_number` |
 | `path` | The route out | `hop_1_ip_address`, `hop_2_ip_address`, `hop_3_ip_address`, `hops_to_target` |
 | `last_mile` | The provider's first stop | `ip_address`, ping results |
-| `internet` | Points beyond it | ping results, `dns_query_time_ms`, NDT7 results |
+| `internet` | Points beyond it | ping results, `dns_query_time_ms`, speed-test results |
 
-Ping results are `packets_transmitted`, `packets_received`, `packet_loss_pct`,
-`rtt_min_ms`, `rtt_avg_ms`, `rtt_max_ms` and `rtt_mdev_ms`, named as in Netrics.
-
-NDT7 results are `speedtest_ndt7_download`, `speedtest_ndt7_upload`,
-`speedtest_ndt7_downloadretrans`, `speedtest_ndt7_downloadlatency`,
-`speedtest_ndt7_uploadlatency`, `speedtest_ndt7_server`,
-`speedtest_ndt7_downloaduuid` and `speedtest_ndt7_uploaduuid`. Speeds are in
-Mbit/s, latencies in ms, and retransmission in percent. The two identifiers
-are M-Lab's own, under which it publishes its record of the test.
-
-Speed-test names follow Netrics' `speedtest_ndt7_*`.
+- **Ping results:** `packets_transmitted`, `packets_received`,
+  `packet_loss_pct`, `rtt_min_ms`, `rtt_avg_ms`, `rtt_max_ms`, `rtt_mdev_ms`.
+- **Speed-test results:** `speedtest_ndt7_download` and `speedtest_ndt7_upload`
+  in Mbit/s, `speedtest_ndt7_downloadlatency` and
+  `speedtest_ndt7_uploadlatency` in ms, `speedtest_ndt7_downloadretrans` in
+  percent, `speedtest_ndt7_server`, and `speedtest_ndt7_downloaduuid` and
+  `speedtest_ndt7_uploaduuid`, M-Lab's own identifiers for the test.
 
 Where a command prints more than is needed, the program keeps the needed parts.
 From a device's pages it keeps the labelled maker, model and serial rows.
@@ -225,37 +241,73 @@ From a device's pages it keeps the labelled maker, model and serial rows.
 | 8.8.8.8 | Name-lookup timing | Lookups of five well-known site names |
 | 1.1.1.1, 8.8.8.8, www.google.com | Ping and route trace | Pings |
 
-Outside packages: `modernc.org/sqlite`, a pure-Go SQLite driver, and
-`github.com/m-lab/ndt7-client-go`, M-Lab's NDT7 client.
+## Build from source
 
-## Status
+With [Go](https://go.dev) installed:
 
-- Run on macOS 27 (Apple silicon), on Wi-Fi, as an ordinary user, against one
-  router (ARRIS NVG589).
-- Run on Ubuntu 26.04 (x86_64) in a cloud machine, on a wired virtual
-  interface, as an ordinary user: light and full scans.
-- Releases are built for `linux/arm64`, `linux/amd64`, `windows/amd64`,
-  `darwin/arm64` and `darwin/amd64`.
-- The tests run on Linux, macOS and Windows on every push.
-- The readers for route, connection, Wi-Fi, neighbor table, route trace, ping,
-  device pages and speed-test counters are tested against sample output from
-  macOS, Linux and Windows. Windows output is matched in English.
-- On macOS 27 the lookup of the router's hardware address returns `no entry`,
-  and the scan records that response.
+```sh
+go install github.com/malewis5/big-apple-connect-box/cmd/big-apple-connect-box@latest
+```
+
+Or from a checkout:
+
+```sh
+go run ./cmd/big-apple-connect-box
+go test ./...
+```
+
+```
+cmd/big-apple-connect-box/    the command: flags, schedule, printed report
+internal/collector/           the scan
+    collector.go                  scan, probe and observation types; scan order
+    recorder.go                   recording probes; running commands and reading files
+    platform.go                   what each operating system must provide
+    darwin.go                     macOS commands and readers
+    linux.go                      Linux commands and readers
+    windows.go                    Windows commands and readers
+    setup.go                      provider, router and modem
+    measure.go                    route, ping, name lookup, speed test
+internal/store/               the SQLite schema and saving a scan
+```
+
+Each step has two halves. One runs a command or makes a request. The other is
+a function from the text that came back to observations. The tests cover the
+second half, using sample output from macOS, Linux and Windows.
+
+It uses two outside packages: [`modernc.org/sqlite`](https://modernc.org/sqlite),
+a SQLite driver written in Go, and
+[`ndt7-client-go`](https://github.com/m-lab/ndt7-client-go), M-Lab's speed-test
+client.
 
 ## Releases
 
-Versions and their changes are listed in [CHANGELOG.md](CHANGELOG.md), which
-[release-please](https://github.com/googleapis/release-please) writes from the
-commit history. Commit messages follow
-[Conventional Commits](https://www.conventionalcommits.org): `fix:` for a
-fix, `feat:` for a new capability, and a `!` after the type for a breaking
-change.
+Every version and its changes are in [CHANGELOG.md](CHANGELOG.md).
 
-On every push to `main`, release-please opens or updates a release pull
-request with the next version and its changelog. Merging it tags the version
-and publishes the release, and a workflow builds the program for each system
-from that tag, attaches the files and attests the build.
+[release-please](https://github.com/googleapis/release-please) writes the
+changelog from commit messages, which follow
+[Conventional Commits](https://www.conventionalcommits.org): `fix:` for a fix,
+`feat:` for a new capability, and a `!` after the type for a breaking change.
+
+On every push to `main`, release-please updates a release pull request with
+the next version. Merging it tags the version and publishes the release. A
+workflow then builds the program for each system from that tag, attaches the
+files and attests the build.
+
+## Status
+
+- **macOS:** run on macOS 27 (Apple silicon), on Wi-Fi, as an ordinary user,
+  against one router (ARRIS NVG589).
+- **Linux:** run on Ubuntu 26.04 (x86_64) in a cloud machine, on a wired
+  virtual interface, as an ordinary user.
+- **Windows:** the tests run there. Output is matched in English.
+- **Tests:** run on Linux, macOS and Windows on every push.
+- **Releases:** built for `linux/arm64`, `linux/amd64`, `windows/amd64`,
+  `darwin/arm64` and `darwin/amd64`.
+
+## Feedback
+
+Questions, problems and corrections are welcome as
+[issues](https://github.com/malewis5/big-apple-connect-box/issues).
 
 ## License
 
