@@ -1,4 +1,4 @@
-# big-apple-connect
+# big-apple-connect-box
 
 Collects evidence about a home internet connection.
 
@@ -17,7 +17,7 @@ SQLite database, `evidence.db`, in the directory it is run from.
 
 ## Install
 
-Each [release](https://github.com/malewis5/big-apple-connect/releases) has the
+Each [release](https://github.com/malewis5/big-apple-connect-box/releases) has the
 program for Raspberry Pi and other 64-bit ARM Linux (`linux_arm64`), Linux
 (`linux_amd64`), Windows (`windows_amd64`) and macOS (`darwin_arm64`,
 `darwin_amd64`), with a `checksums.txt` of their SHA-256 sums. To check a
@@ -30,10 +30,10 @@ sha256sum --check --ignore-missing checksums.txt
 With Go installed:
 
 ```sh
-go install github.com/malewis5/big-apple-connect/cmd/big-apple-connect@latest
+go install github.com/malewis5/big-apple-connect-box/cmd/big-apple-connect-box@latest
 ```
 
-`big-apple-connect -version` prints the version the program was built from.
+`big-apple-connect-box -version` prints the version the program was built from.
 
 Releases published while the repository is public carry a build attestation:
 a signed record, kept by GitHub, that the file was built by this repository's
@@ -41,7 +41,7 @@ release workflow from a specific commit. To verify a download with the
 [GitHub CLI](https://cli.github.com):
 
 ```sh
-gh attestation verify big-apple-connect_linux_arm64 --repo malewis5/big-apple-connect
+gh attestation verify big-apple-connect-box_linux_arm64 --repo malewis5/big-apple-connect-box
 ```
 
 ## Run
@@ -49,18 +49,18 @@ gh attestation verify big-apple-connect_linux_arm64 --repo malewis5/big-apple-co
 From a checkout:
 
 ```sh
-go run ./cmd/big-apple-connect                # one full scan, printed and saved
-go run ./cmd/big-apple-connect -kind light    # one light scan
-go run ./cmd/big-apple-connect -daemon        # keep running: light every 5 minutes, full every hour
+go run ./cmd/big-apple-connect-box                # one full scan, printed and saved
+go run ./cmd/big-apple-connect-box -kind light    # one light scan
+go run ./cmd/big-apple-connect-box -daemon        # keep running: light every 5 minutes, full every hour
 go test ./...
 ```
 
 Build for each system from any one machine:
 
 ```sh
-CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build -o dist/big-apple-connect-linux-arm64       ./cmd/big-apple-connect   # the box
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/big-apple-connect-windows-amd64.exe ./cmd/big-apple-connect
-CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build -o dist/big-apple-connect-darwin-arm64      ./cmd/big-apple-connect
+CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build -o dist/big-apple-connect-box-linux-arm64       ./cmd/big-apple-connect-box   # the box
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/big-apple-connect-box-windows-amd64.exe ./cmd/big-apple-connect-box
+CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64 go build -o dist/big-apple-connect-box-darwin-arm64      ./cmd/big-apple-connect-box
 ```
 
 ## What a scan does
@@ -93,7 +93,7 @@ during each phase of the speed test.
 ## Layout
 
 ```
-cmd/big-apple-connect/    the command: flags, schedule, printed report
+cmd/big-apple-connect-box/    the command: flags, schedule, printed report
 internal/collector/       the scan
     collector.go              scan, probe and observation types; scan order
     recorder.go               recording probes; running commands and reading files
@@ -215,7 +215,9 @@ Outside packages: `modernc.org/sqlite`, a pure-Go SQLite driver, and
   router (ARRIS NVG589).
 - Run on Ubuntu 26.04 (x86_64) in a cloud machine, on a wired virtual
   interface, as an ordinary user: light and full scans.
-- Builds for `linux/arm64`, `windows/amd64` and `darwin/arm64`.
+- Releases are built for `linux/arm64`, `linux/amd64`, `windows/amd64`,
+  `darwin/arm64` and `darwin/amd64`.
+- The tests run on Linux, macOS and Windows on every push.
 - The readers for route, connection, Wi-Fi, neighbor table, route trace, ping,
   device pages and speed-test counters are tested against sample output from
   macOS, Linux and Windows. Windows output is matched in English.
