@@ -23,10 +23,18 @@ import (
 	"time"
 )
 
-// Version returns the collector's version, stored with every scan. It is
-// the version Go recorded when the program was built: the git tag for a
-// release, or "devel" for a build Go could not attribute to one.
+// version is set when a release is built:
+//
+//	go build -ldflags "-X github.com/malewis5/big-apple-connect-box/apps/box/internal/collector.version=v0.0.2"
+var version string
+
+// Version returns the collector's version, stored with every scan: the
+// release it was built as, else the version Go recorded for the build, else
+// "devel".
 func Version() string {
+	if version != "" {
+		return version
+	}
 	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
 		return info.Main.Version
 	}

@@ -1,4 +1,4 @@
-module github.com/malewis5/big-apple-connect-box
+module github.com/malewis5/big-apple-connect-box/apps/box
 
 go 1.27.4
 

@@ -12,8 +12,8 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/malewis5/big-apple-connect-box/internal/collector"
-	"github.com/malewis5/big-apple-connect-box/internal/store"
+	"github.com/malewis5/big-apple-connect-box/apps/box/internal/collector"
+	"github.com/malewis5/big-apple-connect-box/apps/box/internal/store"
 )
 
 const (

@@ -1,0 +1,9 @@
+{
+  "name": "box",
+  "private": true,
+  "scripts": {
+    "build": "go build -o bin/ ./cmd/big-apple-connect-box",
+    "lint": "go vet ./...",
+    "test": "go test -count=1 ./..."
+  }
+}
