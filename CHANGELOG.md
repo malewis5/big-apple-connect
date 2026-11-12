@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.2](https://github.com/malewis5/big-apple-connect-box/compare/v0.0.1...v0.0.2) (2026-11-12)
+
+
+### Features
+
+* add a starter website in apps/web ([31a8585](https://github.com/malewis5/big-apple-connect-box/commit/31a8585a7c9031039167cc919342ccc87f47319f))
+* move the measuring program to apps/box ([92f97e4](https://github.com/malewis5/big-apple-connect-box/commit/92f97e4b84a7818c5e4d8ec4687c77a87088169e))
+
 ## 0.0.1 (2026-11-12)
 
 The first release: one program that measures a home internet connection and saves what it finds to a local SQLite database.
