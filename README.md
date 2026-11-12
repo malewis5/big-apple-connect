@@ -15,7 +15,29 @@ things together:
 The program records what it did and what came back, and stores it in a local
 SQLite database, `evidence.db`, in the directory it is run from.
 
+## Install
+
+Each [release](https://github.com/malewis5/big-apple-connect/releases) has the
+program for Raspberry Pi and other 64-bit ARM Linux (`linux_arm64`), Linux
+(`linux_amd64`), Windows (`windows_amd64`) and macOS (`darwin_arm64`,
+`darwin_amd64`), with a `checksums.txt` of their SHA-256 sums. To check a
+download against it:
+
+```sh
+sha256sum --check --ignore-missing checksums.txt
+```
+
+With Go installed:
+
+```sh
+go install github.com/malewis5/big-apple-connect/cmd/big-apple-connect@latest
+```
+
+`big-apple-connect -version` prints the version the program was built from.
+
 ## Run
+
+From a checkout:
 
 ```sh
 go run ./cmd/big-apple-connect                # one full scan, printed and saved
@@ -190,6 +212,20 @@ Outside packages: `modernc.org/sqlite`, a pure-Go SQLite driver, and
   macOS, Linux and Windows. Windows output is matched in English.
 - On macOS 27 the lookup of the router's hardware address returns `no entry`,
   and the scan records that response.
+
+## Releases
+
+Versions and their changes are listed in [CHANGELOG.md](CHANGELOG.md), which
+[release-please](https://github.com/googleapis/release-please) writes from the
+commit history. Commit messages follow
+[Conventional Commits](https://www.conventionalcommits.org): `fix:` for a
+fix, `feat:` for a new capability, and a `!` after the type for a breaking
+change.
+
+On every push to `main`, release-please opens or updates a release pull
+request with the next version and its changelog. Merging it tags the version
+and publishes the release, and a workflow builds the program for each system
+from that tag and attaches the files.
 
 ## License
 
