@@ -49,9 +49,9 @@ jobs:
         run: |
           for target in linux/arm64 linux/amd64 windows/amd64 darwin/arm64 darwin/amd64; do
             os=${target%/*} arch=${target#*/}
-            name=big-apple-connect_${os}_${arch}
+            name=big-apple-connect-box_${os}_${arch}
             [ "$os" = windows ] && name=$name.exe
-            GOOS=$os GOARCH=$arch go build -trimpath -o "dist/$name" ./cmd/big-apple-connect
+            GOOS=$os GOARCH=$arch go build -trimpath -o "dist/$name" ./cmd/big-apple-connect-box
           done
           cd dist && sha256sum * > checksums.txt
       # An attestation is a signed record that a file was built by this

@@ -40,7 +40,7 @@ const (
 	dnsServer  = "8.8.8.8:53" // Netrics' name-lookup server
 	dnsTimeout = 5 * time.Second
 
-	ndt7ClientName = "big-apple-connect"
+	ndt7ClientName = "big-apple-connect-box"
 	ndt7Timeout    = 90 * time.Second
 	// cpuSampleDelay puts the processor-load reading inside the download.
 	cpuSampleDelay = 3 * time.Second

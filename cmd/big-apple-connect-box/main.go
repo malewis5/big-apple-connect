@@ -1,4 +1,4 @@
-// Command big-apple-connect collects evidence about a home internet
+// Command big-apple-connect-box collects evidence about a home internet
 // connection and saves it to evidence.db. The same program runs on a
 // dedicated box and as an app on a volunteer's own computer.
 package main
@@ -12,8 +12,8 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/malewis5/big-apple-connect/internal/collector"
-	"github.com/malewis5/big-apple-connect/internal/store"
+	"github.com/malewis5/big-apple-connect-box/internal/collector"
+	"github.com/malewis5/big-apple-connect-box/internal/store"
 )
 
 const (

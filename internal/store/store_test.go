@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/malewis5/big-apple-connect/internal/collector"
+	"github.com/malewis5/big-apple-connect-box/internal/collector"
 )
 
 func TestSave(t *testing.T) {
