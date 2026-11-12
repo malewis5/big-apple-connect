@@ -190,3 +190,8 @@ Outside packages: `modernc.org/sqlite`, a pure-Go SQLite driver, and
   macOS, Linux and Windows. Windows output is matched in English.
 - On macOS 27 the lookup of the router's hardware address returns `no entry`,
   and the scan records that response.
+
+## License
+
+[0BSD](LICENSE). Use, copy, change and distribute it for any purpose, with or
+without credit.
