@@ -35,6 +35,15 @@ go install github.com/malewis5/big-apple-connect/cmd/big-apple-connect@latest
 
 `big-apple-connect -version` prints the version the program was built from.
 
+Releases published while the repository is public carry a build attestation:
+a signed record, kept by GitHub, that the file was built by this repository's
+release workflow from a specific commit. To verify a download with the
+[GitHub CLI](https://cli.github.com):
+
+```sh
+gh attestation verify big-apple-connect_linux_arm64 --repo malewis5/big-apple-connect
+```
+
 ## Run
 
 From a checkout:
@@ -225,7 +234,7 @@ change.
 On every push to `main`, release-please opens or updates a release pull
 request with the next version and its changelog. Merging it tags the version
 and publishes the release, and a workflow builds the program for each system
-from that tag and attaches the files.
+from that tag, attaches the files and attests the build.
 
 ## License
 
