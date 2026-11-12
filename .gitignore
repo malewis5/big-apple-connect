@@ -1,0 +1,6 @@
+# The database holds a home's public address and equipment serial numbers.
+*.db
+
+# Built programs
+/big-apple-connect
+/dist/
