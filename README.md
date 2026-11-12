@@ -44,7 +44,8 @@ Together, I hope they do two things:
 | The website for a quick check | Planned |
 | A dashboard to view the status of your home network, and an agent that can help you improve it based on real-time data from your setup | Planned |
 
-The rest of this page is about the measuring program.
+The rest of this page is about the measuring program, which lives in
+[`apps/box`](apps/box).
 
 ## Quick start
 
@@ -273,31 +274,51 @@ From a device's pages it keeps the labelled maker, model and serial rows.
 
 ## Build from source
 
-With [Go](https://go.dev) installed:
+The repository is a [Turborepo](https://turborepo.dev) with two apps:
+
+```
+apps/box/    the measuring program, in Go
+apps/web/    the website, in Next.js (a starter page for now)
+```
+
+To install only the measuring program, with [Go](https://go.dev):
 
 ```sh
-go install github.com/malewis5/big-apple-connect-box/cmd/big-apple-connect-box@latest
+go install github.com/malewis5/big-apple-connect-box/apps/box/cmd/big-apple-connect-box@latest
 ```
 
-Or from a checkout:
+To work on the repository, install [Go](https://go.dev),
+[Node.js](https://nodejs.org) and [pnpm](https://pnpm.io), then:
 
 ```sh
-go run ./cmd/big-apple-connect-box
-go test ./...
+pnpm install
+pnpm build    # build both apps; the program lands in apps/box/bin
+pnpm test     # run the tests
+pnpm lint     # check both apps
+pnpm dev      # run the website at http://localhost:3000
 ```
 
+To run a scan from a checkout:
+
+```sh
+cd apps/box && go run ./cmd/big-apple-connect-box
 ```
-cmd/big-apple-connect-box/    the command: flags, schedule, printed report
-internal/collector/           the scan
-    collector.go                  scan, probe and observation types; scan order
-    recorder.go                   recording probes; running commands and reading files
-    platform.go                   what each operating system must provide
-    darwin.go                     macOS commands and readers
-    linux.go                      Linux commands and readers
-    windows.go                    Windows commands and readers
-    setup.go                      provider, router and modem
-    measure.go                    route, ping, name lookup, speed test
-internal/store/               the SQLite schema and saving a scan
+
+The measuring program is laid out like this:
+
+```
+apps/box/
+    cmd/big-apple-connect-box/    the command: flags, schedule, printed report
+    internal/collector/           the scan
+        collector.go                  scan, probe and observation types; scan order
+        recorder.go                   recording probes; running commands and reading files
+        platform.go                   what each operating system must provide
+        darwin.go                     macOS commands and readers
+        linux.go                      Linux commands and readers
+        windows.go                    Windows commands and readers
+        setup.go                      provider, router and modem
+        measure.go                    route, ping, name lookup, speed test
+    internal/store/               the SQLite schema and saving a scan
 ```
 
 Each step has two halves. One runs a command or makes a request. The other is
