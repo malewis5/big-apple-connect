@@ -39,7 +39,7 @@ Together, I hope they do two things:
 
 | Piece | Status |
 |---|---|
-| The measuring program, for the box and for personal computers | Here, in this repository |
+| The measuring program, for the box and for personal computers | Done |
 | The box, ready to plug in | Planned |
 | The website for a quick check | Planned |
 | Advice for improving a home's setup | Planned |
