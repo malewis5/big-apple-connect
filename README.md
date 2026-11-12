@@ -1,6 +1,25 @@
 # big-apple-connect-box
 
-Collects evidence about a home internet connection.
+An independent, open-source measurement box for home internet in New York
+City.
+
+Big Apple Connect is New York City's program that provides free home internet
+to residents of NYCHA public housing. This project is building a small box,
+and a matching app, that sits in a home and records how the internet
+connection there performs: its speed, its delay and its reliability, kept as
+evidence that anyone can check. The aim is for households, and the people who
+run programs like Big Apple Connect, to be able to see what a connection
+delivers.
+
+> **This is an independent project.** It is not affiliated with, endorsed by
+> or operated by the City of New York, NYCHA, or any internet provider. It
+> carries the name of the program it was built to measure. We hope it will be
+> useful to the city, and would welcome working with it.
+
+## What this repository is
+
+The collector: the program that runs on the box and collects evidence about a
+home internet connection.
 
 One Go program does the collecting. It runs on a dedicated box plugged into the
 router, and as an app on a volunteer's own computer. Every scan records two
