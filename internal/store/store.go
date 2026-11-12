@@ -90,7 +90,7 @@ func (s *Store) Save(scan *collector.Scan) (int64, error) {
 		(kind, started_at, finished_at, tool_version, os, arch, connection_type)
 		VALUES (?, ?, ?, ?, ?, ?, ?)`,
 		scan.Kind, timestamp(scan.StartedAt), timestamp(scan.FinishedAt),
-		collector.Version, runtime.GOOS, runtime.GOARCH, scan.ConnectionType)
+		collector.Version(), runtime.GOOS, runtime.GOARCH, scan.ConnectionType)
 	if err != nil {
 		return 0, fmt.Errorf("insert scan: %w", err)
 	}

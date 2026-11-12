@@ -19,11 +19,19 @@ package collector
 
 import (
 	"net/http"
+	"runtime/debug"
 	"time"
 )
 
-// Version is the collector's version, stored with every scan.
-const Version = "0.0.1"
+// Version returns the collector's version, stored with every scan. It is
+// the version Go recorded when the program was built: the git tag for a
+// release, or "devel" for a build Go could not attribute to one.
+func Version() string {
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		return info.Main.Version
+	}
+	return "devel"
+}
 
 // Scan kinds. The schedule follows Netrics: light measurements every five
 // minutes, the speed test hourly.

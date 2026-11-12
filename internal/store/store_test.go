@@ -59,7 +59,7 @@ func TestSave(t *testing.T) {
 		Scan(&connection, &version, &started); err != nil {
 		t.Fatal(err)
 	}
-	if connection != "WiFi" || version != collector.Version || started != "2026-11-12T19:31:32.370Z" {
+	if connection != "WiFi" || version != collector.Version() || started != "2026-11-12T19:31:32.370Z" {
 		t.Errorf("scan = %q %q %q", connection, version, started)
 	}
 }

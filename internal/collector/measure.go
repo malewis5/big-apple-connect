@@ -219,7 +219,7 @@ type phase struct {
 // gateway, and during the download it also reads the processor load, so
 // the home's side of the connection is on record for the same seconds.
 func (c *collector) ndt7(gateway string) {
-	client := ndt7.NewClient(ndt7ClientName, Version)
+	client := ndt7.NewClient(ndt7ClientName, Version())
 	ctx, cancel := context.WithTimeout(context.Background(), ndt7Timeout)
 	defer cancel()
 

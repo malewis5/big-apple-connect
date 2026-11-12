@@ -33,7 +33,12 @@ func main() {
 func run() error {
 	kind := flag.String("kind", collector.KindFull, "scan to run once: full or light")
 	daemon := flag.Bool("daemon", false, "keep running: a light scan every 5 minutes, a full scan every hour")
+	version := flag.Bool("version", false, "print the version and exit")
 	flag.Parse()
+	if *version {
+		fmt.Println(collector.Version())
+		return nil
+	}
 	if *kind != collector.KindFull && *kind != collector.KindLight {
 		return fmt.Errorf("unknown kind %q: use full or light", *kind)
 	}
