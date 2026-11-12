@@ -1,20 +1,50 @@
 # big-apple-connect-box
 
-Measures a home internet connection and keeps the results as evidence anyone
-can check.
+Is your home internet as fast and reliable as it should be? This project helps
+you find out, and keeps the proof.
 
-Big Apple Connect is New York City's program that gives free home internet to
-residents of NYCHA public housing. This project is building a small box, and a
-matching app, that sits in a home and records what the connection there
-delivers: its speed, its delay and its reliability.
+New York City launched Big Apple Connect
+["to ensure that NYCHA residents have access to free, fast, reliable, and safe internet."](https://access.nyc.gov/programs/big-apple-connect/)
+We share that goal. A promise like that is worth checking, and the place to
+check it is inside the home, where people use the connection.
 
 > **This is an independent project.** It is not affiliated with, endorsed by
 > or run by the City of New York, NYCHA, or any internet provider. It is named
 > for the program it was built to measure. We hope it will be useful to the
 > city, and would welcome working with it.
 
-This repository holds the collector: the one program that runs on the box, or
-on a volunteer's own computer, and does the measuring.
+## The vision
+
+We are building three ways to measure a home connection, so there is one for
+everyone:
+
+1. **A box for the home.** A small, low-cost computer that plugs into the
+   router and measures all day, every day. This follows the path of
+   [Netrics](https://github.com/internet-innovation/netrics), the University
+   of Chicago project that put Raspberry Pi computers in homes across Chicago.
+2. **An app for your own computer.** The same measurements, on a laptop or
+   desktop you already have.
+3. **A website for a quick check.** Nothing to install. Open a page and test
+   your connection right away.
+
+Together, we hope they do two things:
+
+- **Keep internet providers accountable.** Give households, advocates and the
+  city clear evidence of what a connection delivers, beside what was promised.
+- **Help people get more from the internet they have.** With the help of AI,
+  turn that evidence into plain advice for improving a home's own setup, such
+  as where the router sits or which Wi-Fi settings to change.
+
+## Where things stand
+
+| Piece | Status |
+|---|---|
+| The measuring program, for the box and for personal computers | Here, in this repository |
+| The box, ready to plug in | Planned |
+| The website for a quick check | Planned |
+| Advice for improving a home's setup | Planned |
+
+The rest of this page is about the measuring program.
 
 ## Quick start
 
