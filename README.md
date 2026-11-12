@@ -39,7 +39,7 @@ Together, I hope they do two things:
 
 | Piece | Status |
 |---|---|
-| The measuring program, for the box and for personal computers | Done |
+| The measuring program, for the box and for personal computers | In progress |
 | The box, ready to plug in | Planned |
 | The website for a quick check | Planned |
 | A dashboard to view the status of your home network, and an agent that can help you improve it based on real-time data from your setup | Planned |
