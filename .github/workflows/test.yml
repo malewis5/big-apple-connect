@@ -8,7 +8,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  # The collector, on every system it is released for.
+  box:
     strategy:
       fail-fast: false
       matrix:
@@ -16,8 +17,27 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
       - uses: actions/setup-go@v7
         with:
-          go-version-file: go.mod
-      - run: go vet ./...
-      - run: go test -count=1 ./...
+          go-version-file: apps/box/go.mod
+          cache-dependency-path: apps/box/go.sum
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo run lint test --filter=box
+
+  # The website.
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo run lint build --filter=web

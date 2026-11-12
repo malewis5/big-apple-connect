@@ -1,6 +1,8 @@
 # The database holds a home's public address and equipment serial numbers.
 *.db
 
-# Built programs
-/big-apple-connect-box
-/dist/
+# Dependencies and build output
+node_modules/
+.turbo/
+bin/
+dist/
