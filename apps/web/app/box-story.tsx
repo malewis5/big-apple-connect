@@ -24,6 +24,27 @@ const steps: Step[] = storySteps.map((step, k) => ({ from: FRAME_RANGES[k][0], t
 // Where each step begins, for the progress bars. The last entry is the end.
 const STARTS = [0, 34, 90, 140, FRAMES - 1];
 
+// When the story stands still. It normally pins to the screen and plays as
+// you scroll, which needs room: on a short screen (a phone on its side, or a
+// page zoomed far in) the words would be cut off. So there, and for people
+// who ask their device for less motion, it becomes an ordinary part of the
+// page: the finished box, then every step, all readable at once.
+const STILL_QUERY = "(max-height: 520px), (prefers-reduced-motion: reduce)";
+// The same rules apply without JavaScript, when nothing can play the story.
+// They are !important to win over the layout classes and over the styles
+// the scroll code sets on each caption.
+const STILL_CSS = `
+#story { height: auto !important; }
+#story [data-pin] { position: static !important; height: auto !important; overflow: visible !important; }
+#story [data-layout] { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 2rem !important; height: auto !important; padding-block: 4rem !important; }
+#story [data-stage] { order: 0 !important; flex: none !important; width: 100% !important; height: min(100vw - 3rem, 22rem) !important; }
+#story [data-picture] { max-width: none !important; }
+#story [data-text] { order: 1 !important; }
+#story [data-captions] { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)) !important; gap: 2.5rem !important; }
+#story [data-caption] { grid-area: auto !important; align-self: start !important; opacity: 1 !important; transform: none !important; }
+#story [data-bars] { display: none !important; }
+`;
+
 function clamp(value: number) {
   return Math.min(1, Math.max(0, value));
 }
@@ -119,6 +140,7 @@ export default function BoxStory() {
     let raf = 0;
     let last = 0;
     let dirty = true;
+    const still = window.matchMedia(STILL_QUERY);
     const player = new FramePlayer(screen, () => {
       dirty = true; // a frame finished decoding; redraw with it
     });
@@ -132,6 +154,7 @@ export default function BoxStory() {
     }
 
     function goal() {
+      if (still.matches) return FRAMES - 1; // standing still: show the finished box
       return clamp((window.scrollY - top) / scrollable) * (FRAMES - 1);
     }
 
@@ -163,7 +186,7 @@ export default function BoxStory() {
       if (raf) return;
       measure();
       frame.current = goal(); // arrive in place, don't animate from a stale spot
-      player.load(frame.current); // on screen already, so don't wait for the page to finish loading
+      player.load(frame.current, still.matches); // on screen already, so don't wait for the page to finish loading
       last = 0;
       raf = requestAnimationFrame(tick);
     }
@@ -181,7 +204,7 @@ export default function BoxStory() {
 
     // Download frames once the rest of the page has loaded, so they never
     // compete with the first screen.
-    const load = () => player.load(frame.current);
+    const load = () => player.load(frame.current, still.matches);
     if (document.readyState === "complete") load();
     else window.addEventListener("load", load, { once: true });
 
@@ -194,7 +217,15 @@ export default function BoxStory() {
     resized.observe(el);
     resized.observe(document.body);
     window.addEventListener("resize", measure);
+    // Turning a phone, zooming, or changing the motion setting can start or
+    // stop the story. Once it plays, it needs every frame.
+    const stillChanged = () => {
+      measure();
+      if (!still.matches) player.load(goal());
+    };
+    still.addEventListener("change", stillChanged);
     return () => {
+      still.removeEventListener("change", stillChanged);
       stop();
       player.dispose();
       window.removeEventListener("load", load);
@@ -206,11 +237,24 @@ export default function BoxStory() {
 
   return (
     <>
+    {/* React moves this to the <head>. */}
+    <style href="story-still" precedence="default">{`@media ${STILL_QUERY} {${STILL_CSS}}`}</style>
+    <noscript>
+      <style>{STILL_CSS}</style>
+    </noscript>
     <section id="story" ref={section} className="relative h-[600vh]" aria-label="How the box comes together">
-      <div ref={pinned} data-pin className="sticky top-0 flex h-svh items-center overflow-hidden">
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-4 px-6 lg:grid-cols-[1fr_1.25fr] lg:gap-12">
-          <div className="order-2 lg:order-1">
-          <div className="relative h-48 lg:h-72">
+      <div ref={pinned} data-pin className="sticky top-0 h-svh overflow-hidden">
+        {/* On a phone the picture sits above the words and gives up height
+            when the words need it (large text, wide spacing), so they never
+            overlap. On a wide screen they sit side by side. */}
+        <div
+          data-layout
+          className="mx-auto flex h-full w-full max-w-6xl flex-col justify-center gap-4 px-6 py-6 lg:grid lg:grid-cols-[1fr_1.25fr] lg:items-center lg:gap-12 lg:py-0"
+        >
+          <div data-text className="order-2 shrink-0 lg:order-1">
+          {/* Every caption shares one grid cell, so the cell is as tall as the
+              longest and the words stay in the page's flow. */}
+          <div data-captions className="grid">
             {steps.map((step, k) => (
               <div
                 key={step.title}
@@ -220,9 +264,9 @@ export default function BoxStory() {
                 data-caption
                 // Prepaint sets its style before React loads.
                 suppressHydrationWarning
-                className="absolute inset-x-0 bottom-0 opacity-0 will-change-transform"
+                className="col-start-1 row-start-1 self-end opacity-0 will-change-transform"
               >
-                <p className="text-sm font-medium uppercase tracking-widest text-emerald-600">
+                <p className="text-sm font-medium uppercase tracking-widest text-emerald-700">
                   Step {k + 1}
                 </p>
                 <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
@@ -232,7 +276,7 @@ export default function BoxStory() {
               </div>
             ))}
           </div>
-          <div className="mt-8 flex gap-2" aria-hidden="true">
+          <div data-bars className="mt-8 flex gap-2" aria-hidden="true">
             {steps.map((step, k) => (
               <span key={step.title} className="h-1 w-10 overflow-hidden rounded-full bg-zinc-200">
                 <span
@@ -248,10 +292,17 @@ export default function BoxStory() {
             ))}
           </div>
           </div>
+          {/* The space the picture may use. The picture is the largest square
+              that fits in it (cqw and cqh are this box's width and height). */}
           <div
+            data-stage
+            className="order-1 flex min-h-0 shrink grow-0 basis-[min(60svh,calc(100vw-3rem))] items-center justify-center [container-type:size] lg:order-2 lg:h-full"
+          >
+          <div
+            data-picture
             role="img"
             aria-label="A small Raspberry Pi computer is closed inside a white box. An internet cable and a power cable plug in, and a green light turns on."
-            className="relative order-1 mx-auto aspect-square w-full max-w-[min(100%,60svh)] lg:order-2 lg:max-w-[min(100%,80svh)]"
+            className="relative aspect-square w-[min(100cqw,100cqh)] lg:max-w-[80svh]"
           >
             <noscript>
               {/* eslint-disable-next-line @next/next/no-img-element -- frames are pre-sized; the optimizer adds nothing */}
@@ -266,6 +317,7 @@ export default function BoxStory() {
             {/* Fades in once it has the right frame, so a reload mid-story
                 never flashes the wrong one. */}
             <canvas ref={canvas} className="absolute inset-0 size-full opacity-0 transition-opacity duration-300" />
+          </div>
           </div>
         </div>
       </div>

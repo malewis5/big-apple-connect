@@ -17,3 +17,13 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
 }
+
+/* One clear focus ring for keyboard users, the same on every link and
+   question. Two rings, dark inside white, so it shows on any background. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid #18181b;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px #ffffff;
+  }
+}

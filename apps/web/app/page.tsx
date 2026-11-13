@@ -68,6 +68,13 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
+      {/* The first stop for the Tab key: jump past the header. Hidden until focused. */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:bg-zinc-900 focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white"
+      >
+        Skip to main content
+      </a>
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
         <a href="#" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
           <span className="size-2.5 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgb(16_185_129/0.15)]" />
@@ -82,7 +89,7 @@ export default function Home() {
         </a>
       </header>
 
-      <main>
+      <main id="main" tabIndex={-1} className="outline-none">
         <section className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center px-6 pb-20 text-center">
           <p className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
             {hero.eyebrow}
@@ -91,7 +98,7 @@ export default function Home() {
             {hero.title}
           </h1>
           <p className="mt-6 max-w-2xl text-xl leading-relaxed text-pretty text-zinc-500 sm:text-2xl">{hero.body}</p>
-          <div className="mt-16 flex flex-col items-center gap-2 text-sm text-zinc-400" aria-hidden="true">
+          <div className="mt-16 flex flex-col items-center gap-2 text-sm text-zinc-500" aria-hidden="true">
             Scroll to see how it works
             <svg viewBox="0 0 20 20" className="size-5 motion-safe:animate-bounce" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M5 8l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
@@ -115,7 +122,7 @@ export default function Home() {
                   <h3 className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xl font-semibold">
                     {reason.title}
                     {reason.later && (
-                      <span className="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-zinc-500">
+                      <span className="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-zinc-600">
                         Coming later
                       </span>
                     )}
@@ -152,7 +159,7 @@ export default function Home() {
                     <svg
                       viewBox="0 0 20 20"
                       aria-hidden="true"
-                      className="size-5 shrink-0 text-zinc-400 transition group-open:rotate-180"
+                      className="size-5 shrink-0 text-zinc-500 transition group-open:rotate-180 motion-reduce:transition-none"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"
@@ -168,7 +175,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="bg-zinc-50 px-6 pb-16 text-center text-sm leading-relaxed text-zinc-400">
+      <footer className="bg-zinc-50 px-6 pb-16 text-center text-sm leading-relaxed text-zinc-600">
         <p className="mx-auto max-w-2xl">{DISCLAIMER}</p>
       </footer>
     </div>
