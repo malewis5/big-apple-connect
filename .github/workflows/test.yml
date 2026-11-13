@@ -1,8 +1,17 @@
 name: test
 
+# Pull requests are tested as they change; main is tested after each merge.
+# Pushes to other branches don't run anything on their own, so a branch with
+# a pull request isn't tested twice.
 on:
   push:
+    branches: [main]
   pull_request:
+
+# A newer push to the same pull request or branch cancels the older run.
+concurrency:
+  group: test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -13,8 +22,56 @@ permissions:
 # stopping the job, and Turborepo falls back to running every task.
 
 jobs:
+  # Works out which apps the change touches, so a website change doesn't
+  # test the collector on three systems, and the other way around.
+  # Turborepo counts shared files too: turbo.json or the root package.json
+  # affect both apps, and a lockfile change affects only the apps whose
+  # dependencies moved. A change to this workflow runs everything.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      box: ${{ steps.affected.outputs.box }}
+      web: ${{ steps.affected.outputs.web }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the comparison needs the history back to the base
+          filter: blob:none
+      - id: affected
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          turbo="npx --yes turbo@$(jq -r '.devDependencies.turbo' package.json | tr -d '^~')"
+          all=false
+          if [ -z "$BASE" ] || [ "$BASE" = 0000000000000000000000000000000000000000 ]; then
+            echo "No base to compare with; testing everything"
+            all=true
+          elif ! git diff --quiet "$BASE" HEAD -- .github/workflows/test.yml; then
+            echo "This workflow changed; testing everything"
+            all=true
+          fi
+          for app in box web; do
+            if [ "$all" = true ]; then
+              result=true
+            else
+              set +e
+              $turbo query affected --packages "$app" --base "$BASE" --head HEAD --exit-code > /dev/null
+              code=$?
+              set -e
+              case $code in
+                0) result=false ;;
+                1) result=true ;;
+                *) echo "::warning::turbo query affected failed for $app; testing it anyway"; result=true ;;
+              esac
+            fi
+            echo "$app affected: $result"
+            echo "$app=$result" >> "$GITHUB_OUTPUT"
+          done
+
   # The collector, on every system it is released for.
   box:
+    needs: changes
+    if: needs.changes.outputs.box == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -41,6 +98,8 @@ jobs:
 
   # The website.
   web:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
