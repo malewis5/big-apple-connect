@@ -40,6 +40,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Content negotiation for Markdown (Accept: text/markdown) is in proxy.ts.
   headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
