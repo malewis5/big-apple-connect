@@ -216,7 +216,7 @@ export default function Home() {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter className="bg-zinc-50" />
     </div>
   );
 }

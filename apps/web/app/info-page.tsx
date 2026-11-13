@@ -19,9 +19,10 @@ export function infoMetadata(slug: string): Metadata {
 }
 
 // Links to the About, Contact and Privacy pages, shown at the foot of every page.
-export function SiteFooter() {
+// The home page ends on light grey, so it passes that in to match.
+export function SiteFooter({ className = "" }: { className?: string }) {
   return (
-    <footer className="bg-zinc-50 px-6 pb-16 text-center text-sm leading-relaxed text-zinc-600">
+    <footer className={`px-6 pb-16 text-center text-sm leading-relaxed text-zinc-600 ${className}`}>
       <nav aria-label="About this site" className="flex flex-wrap justify-center gap-x-6 gap-y-2">
         {infoPages.map((page) => (
           <Link key={page.slug} href={`/${page.slug}`} className="font-medium underline-offset-4 hover:text-zinc-900 hover:underline">
@@ -67,7 +68,7 @@ export default function InfoPageView({ slug }: { slug: string }) {
   };
 
   return (
-    <div className="flex flex-1 flex-col bg-zinc-50 text-zinc-900">
+    <div className="flex flex-1 flex-col bg-white text-zinc-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
