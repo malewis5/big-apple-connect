@@ -55,7 +55,8 @@ export default function DemoVideo() {
   // Play while on screen, pause when scrolled away.
   useEffect(() => {
     const el = video.current;
-    if (!el || !mayAutoplay()) return;
+    if (!el) return;
+    const autoplay = mayAutoplay();
     // Once someone pauses it themselves, or it reaches the end, leave it
     // paused until they press play again.
     let userPaused = false;
@@ -73,7 +74,7 @@ export default function DemoVideo() {
       ([entry]) => {
         if (userPaused) return;
         if (entry.isIntersecting) {
-          el.play().catch(() => {}); // a browser may still refuse; the controls remain
+          if (autoplay) el.play().catch(() => {}); // a browser may still refuse; the controls remain
         } else if (!el.paused) {
           ours = true;
           el.pause();
