@@ -1,0 +1,11 @@
+name: An idea or a question
+description: Something the project could do, or something that isn't clear.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea or question
+      description: What you'd like, and what it would help you do.
+    validations:
+      required: true
