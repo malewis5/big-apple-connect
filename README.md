@@ -378,6 +378,8 @@ files and attests the build.
 
 Questions, problems and corrections are welcome as
 [issues](https://github.com/malewis5/big-apple-connect-box/issues).
+[CONTRIBUTING.md](CONTRIBUTING.md) explains how to propose a change. Report a
+security problem privately, as [SECURITY.md](SECURITY.md) describes.
 
 ## License
 

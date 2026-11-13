@@ -8,10 +8,11 @@ on:
     branches: [main]
   pull_request:
 
-# A newer push to the same pull request or branch cancels the older run.
+# A newer push to the same pull request cancels the older run. Runs on main
+# are never cancelled, so every merge is tested to the end.
 concurrency:
-  group: test-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: test-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -127,3 +128,20 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm turbo run lint build --filter=web
+
+  # One result for the whole workflow. The branch rules for main require this
+  # check and nothing else, because the jobs above are skipped when a change
+  # doesn't touch their app, and the box job's name changes with its matrix.
+  ci:
+    needs: [changes, box, web]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any job failed or was cancelled
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Results: $RESULTS"
+          case " $RESULTS " in
+            *" failure "*|*" cancelled "*) exit 1 ;;
+          esac
