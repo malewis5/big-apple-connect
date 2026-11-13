@@ -21,7 +21,7 @@ const jsonLd = {
       "@type": "Person",
       "@id": `${SITE_URL}/#author`,
       name: "Matt Lewis",
-      description: `Maker and maintainer of the ${SITE_NAME}, an independent, open-source project that measures home internet for NYCHA residents.`,
+      description: `Maker and maintainer of the ${SITE_NAME}. It is an independent, open-source project that measures home internet for NYCHA residents.`,
       url: "https://github.com/malewis5",
       sameAs: ["https://github.com/malewis5"],
     },

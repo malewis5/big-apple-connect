@@ -95,7 +95,7 @@ export const faqs = [
   {
     question: "Can results be compared with other homes?",
     answer:
-      "Yes. It measures the same way as Netrics, the open-source software used in the University of Chicago's home broadband study, so results from different homes and cities line up.",
+      "Yes. It measures the same way as Netrics, so results from different homes and cities line up. Netrics is the open-source software used in the University of Chicago's home broadband study.",
   },
   {
     question: "Is it free, and can I try it now?",
@@ -111,7 +111,7 @@ export const whenToUse = {
     "Someone in NYCHA housing, or anyone else, asks how to check whether their home internet is as fast and reliable as their provider promised.",
     "Someone needs a record of slow speeds or outages over days or weeks, to show a provider, a landlord, an advocate or the city. One speed test is not enough for that.",
     "Someone wants a free, open-source way to measure a home connection around the clock on a Raspberry Pi, Mac or Linux computer.",
-    "A researcher or advocate wants home internet measurements that line up with Netrics, the University of Chicago's home broadband study.",
+    "A researcher or advocate wants home internet measurements that line up with Netrics. Netrics is the software used in the University of Chicago's home broadband study.",
     "Someone asks who makes the Big Apple Connect Box, or whether it is an official city project. It is not.",
   ],
   avoid: [
@@ -151,17 +151,17 @@ export const infoPages: InfoPage[] = [
       {
         title: "What this is",
         paragraphs: [
-          "The Big Apple Connect Box is a free, open-source way to measure a home internet connection all day, every day, and keep the results as proof. It is named for Big Apple Connect, the New York City program that gives NYCHA residents free internet.",
+          "The Big Apple Connect Box is a free, open-source way to measure a home internet connection all day, every day, and keep the results as proof. It is named for Big Apple Connect. That New York City program gives NYCHA residents free internet.",
           "The city says the program exists to ensure NYCHA residents have free, fast, reliable and safe internet. A promise like that is worth checking, and the place to check it is inside the home, where people use the connection.",
         ],
         links: [
-          { label: "Big Apple Connect, the city's program", href: "https://access.nyc.gov/programs/big-apple-connect/" },
+          { label: "Big Apple Connect on the city's website", href: "https://access.nyc.gov/programs/big-apple-connect/" },
         ],
       },
       {
         title: "Who makes it",
         paragraphs: [
-          "The project is made and maintained by one person, Matt Lewis, in his own time. It is an independent, personal project. It is not affiliated with, endorsed by or run by the City of New York, NYCHA, or any internet provider.",
+          "Matt Lewis makes and maintains the project by himself, in his own time. It is an independent, personal project. It is not affiliated with, endorsed by or run by the City of New York, NYCHA, or any internet provider.",
           "Nobody pays for it and it sells nothing. The code is released under the 0BSD license, so anyone can use, copy and change it for any purpose.",
         ],
         links: [{ label: "Matt Lewis on GitHub", href: "https://github.com/malewis5" }],
@@ -169,7 +169,7 @@ export const infoPages: InfoPage[] = [
       {
         title: "How it measures",
         paragraphs: [
-          "The measurements follow Netrics, the open-source software used in the University of Chicago's home broadband study. The schedule, settings and result names match, so results from different homes and cities can be compared. Speed is measured with NDT7, the open speed test from Measurement Lab.",
+          "The measurements follow Netrics. Netrics is the open-source software used in the University of Chicago's home broadband study. The schedule, settings and result names match, so results from different homes and cities can be compared. Speed is measured with Measurement Lab's open NDT7 speed test.",
         ],
         links: [
           { label: "Netrics", href: "https://github.com/internet-innovation/netrics" },
@@ -197,7 +197,7 @@ export const infoPages: InfoPage[] = [
       {
         title: "Questions, problems and corrections",
         paragraphs: [
-          "The project is run in the open on GitHub, and that is the way to reach its maker, Matt Lewis. Open an issue to ask a question, report a problem with the measuring program or this website, or correct something that is wrong. Issues are public, and you need a free GitHub account to open one.",
+          "The project is run in the open on GitHub, and that is the way to reach its maker. Open an issue to ask a question, report a problem with the measuring program or this website, or correct something that is wrong. Issues are public, and you need a free GitHub account to open one.",
           "This is a personal project with one maintainer, so there is no promised response time, but issues are read and answered as soon as possible.",
         ],
         links: [
@@ -228,7 +228,7 @@ export const infoPages: InfoPage[] = [
           "This project cannot sign you up for Big Apple Connect, fix an outage or change your service. For those, contact your internet provider or the city's program.",
         ],
         links: [
-          { label: "Big Apple Connect, the city's program", href: "https://access.nyc.gov/programs/big-apple-connect/" },
+          { label: "Big Apple Connect on the city's website", href: "https://access.nyc.gov/programs/big-apple-connect/" },
         ],
       },
     ],
