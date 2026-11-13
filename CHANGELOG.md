@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/malewis5/big-apple-connect-box/compare/v0.0.2...v0.0.3) (2026-11-13)
+
+
+### Features
+
+* **web:** show the box coming together as you scroll ([#3](https://github.com/malewis5/big-apple-connect-box/issues/3)) ([54e6717](https://github.com/malewis5/big-apple-connect-box/commit/54e6717d7e690ed07bfbb062c7ed39ce134fc21c))
+
 ## [0.0.2](https://github.com/malewis5/big-apple-connect-box/compare/v0.0.1...v0.0.2) (2026-11-12)
 
 
