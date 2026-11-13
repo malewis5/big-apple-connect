@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { demoVideo } from "./site";
-import { CARD, CONTAINER, SECTION_LEAD, SECTION_TITLE, SECTION_Y } from "./ui";
+import { CARD, CONTAINER, SECTION_BODY, SECTION_LEAD, SECTION_TITLE, SECTION_Y } from "./ui";
 
 // AV1 at 1080p is the smallest, for browsers that can play it; H.264 at 720p
 // plays everywhere.
@@ -145,7 +145,7 @@ export default function DemoVideo() {
           </h2>
           <p className={SECTION_LEAD}>{demoVideo.body}</p>
         </div>
-        <div className={`relative mt-12 w-full min-w-0 overflow-hidden [container-type:inline-size] lg:mt-0 ${CARD}`}>
+        <div className={`relative ${SECTION_BODY} w-full min-w-0 overflow-hidden [container-type:inline-size] lg:mt-0 ${CARD}`}>
           <video
             ref={video}
             className="block aspect-video w-full"
