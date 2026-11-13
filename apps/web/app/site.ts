@@ -143,7 +143,7 @@ export const faqs = [
   },
   {
     question: "What is NYCHA?",
-    answer: "NYCHA is the New York City Housing Authority. It runs the city's public housing.",
+    answer: "NYCHA is the New York City Housing Authority, and it runs the city's public housing.",
   },
   {
     question: "Is this project run by the City of New York or NYCHA?",
@@ -153,11 +153,7 @@ export const faqs = [
   {
     question: "What does it measure?",
     answer:
-<<<<<<< HEAD
-      "How fast your internet downloads and uploads. How long it takes to reach your router, your provider and the wider internet. That delay is called ping. How long it takes to look up a website's name, the route your data takes out of your home, and how strong your Wi-Fi signal is. It also records your setup: cable or Wi-Fi, your router and modem, and your provider.",
-=======
-      "It measures download and upload speed, ping times to the router, the provider and the wider internet, how long name lookups take, the network path out to the internet, and Wi-Fi signal strength. It also saves a few details of the setup, such as whether the box uses a cable or Wi-Fi, which router and modem are in use, and who the provider is.",
->>>>>>> ceedd7a (feat(web): add the demo video, rewrite the copy and line up every section)
+      "It measures how fast your internet downloads and uploads, and how long it takes to reach your router, your provider and the wider internet (that delay is called ping). It also measures how long it takes to look up a website's name, the path your connection takes out to the internet and how strong your Wi-Fi signal is, and it saves a few details of your setup, such as whether you use a cable or Wi-Fi, which router and modem you have, and who your provider is.",
   },
   {
     question: "How is it different from a speed test on my phone?",
