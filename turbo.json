@@ -6,6 +6,11 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
     },
+    "web#build": {
+      "dependsOn": ["^build"],
+      "env": ["VERCEL_ENV"],
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
+    },
     "box#build": {
       "outputs": ["bin/**"]
     },
