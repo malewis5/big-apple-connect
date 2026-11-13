@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 function LiveDot({ className }: { className: string }) {
   return (
     <span aria-hidden="true" className={`relative flex ${className}`}>
-      <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-40 motion-safe:animate-ping motion-safe:[animation-duration:2.5s]" />
+      <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-40 motion-safe:animate-ping motion-safe:[animation-duration:2.5s] motion-safe:[animation-iteration-count:2]" />
       <span className="relative inline-flex size-full rounded-full bg-emerald-500" />
     </span>
   );
@@ -57,10 +57,10 @@ export default function NotFound() {
         tabIndex={-1}
         className="mx-auto grid w-full max-w-6xl flex-1 content-start items-center px-6 pt-12 pb-16 outline-none sm:pt-20 lg:content-center lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:pt-10 lg:pb-24"
       >
-        <div>
+        <div className="min-w-0">
           <p className="inline-flex rounded-full bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-600">{notFound.eyebrow}</p>
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-balance sm:text-6xl lg:mt-6 lg:text-7xl">{notFound.title}</h1>
-          <p className="mt-4 max-w-lg text-lg leading-relaxed text-pretty text-zinc-500 lg:mt-6 lg:text-xl">
+          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-balance break-words sm:text-6xl lg:mt-6 lg:text-7xl">{notFound.title}</h1>
+          <p className="mt-4 max-w-lg text-lg leading-relaxed text-pretty text-zinc-600 lg:mt-6 lg:text-xl">
             {notFound.body}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5 lg:mt-10">
@@ -72,9 +72,9 @@ export default function NotFound() {
               Back to the home page
             </Link>
             {/* Wide screens only: the footer has the same links. */}
-            <nav aria-label="Other pages" className="hidden gap-6 text-sm font-medium text-zinc-600 lg:flex">
+            <nav aria-label="Other pages" className="hidden gap-2 text-sm font-medium text-zinc-600 lg:flex">
               {infoPages.map((page) => (
-                <Link key={page.slug} href={`/${page.slug}`} className="underline-offset-4 hover:text-zinc-900 hover:underline">
+                <Link key={page.slug} href={`/${page.slug}`} className="inline-flex min-h-11 items-center px-2 underline-offset-4 hover:text-zinc-900 hover:underline">
                   {page.title}
                 </Link>
               ))}
@@ -85,14 +85,14 @@ export default function NotFound() {
         {/* The quick check. A plain list on phones, a card on wide screens. The words on the left say the same. */}
         <figure
           aria-hidden="true"
-          className="mt-12 max-w-lg lg:mt-0 lg:max-w-none lg:rounded-3xl lg:bg-white lg:p-8 lg:shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_60px_-24px_rgb(0_0_0/0.25)] lg:ring-1 lg:ring-zinc-900/5"
+          className="mt-12 max-w-lg min-w-0 lg:mt-0 lg:max-w-none lg:rounded-3xl lg:bg-white lg:p-8 lg:shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_60px_-24px_rgb(0_0_0/0.25)] lg:ring-1 lg:ring-zinc-900/5"
         >
           <div className="flex items-center justify-between text-sm font-medium">
             <span className="flex items-center gap-2.5 text-zinc-900">
               <LiveDot className="size-2.5" />
               {check.title}
             </span>
-            <span className="text-zinc-500 motion-safe:animate-check-in motion-safe:[animation-delay:1.6s]">{check.done}</span>
+            <span className="text-zinc-600 motion-safe:animate-check-in motion-safe:[animation-delay:1.6s]">{check.done}</span>
           </div>
 
           <ul className="mt-4 divide-y lg:mt-6 divide-zinc-900/5 border-t border-zinc-900/5">
@@ -104,11 +104,11 @@ export default function NotFound() {
               >
                 {row.ok ? <CheckIcon /> : <MissingIcon />}
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline justify-between gap-4">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4">
                     <span className="font-semibold lg:text-lg">{row.label}</span>
-                    <span className={`text-sm font-medium ${row.ok ? "text-emerald-700" : "text-zinc-500"}`}>{row.value}</span>
+                    <span className={`text-sm font-medium ${row.ok ? "text-emerald-800" : "text-zinc-600"}`}>{row.value}</span>
                   </div>
-                  <p className="mt-1 hidden truncate text-zinc-500 lg:block">{row.ok ? row.note : <RequestedPath />}</p>
+                  <p className="mt-1 hidden truncate text-zinc-600 lg:block">{row.ok ? row.note : <RequestedPath />}</p>
                 </div>
               </li>
             ))}

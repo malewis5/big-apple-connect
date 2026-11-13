@@ -28,8 +28,9 @@ const STARTS = [0, 34, 90, 140, FRAMES - 1];
 // you scroll, which needs room: on a short screen (a phone on its side, or a
 // page zoomed far in) the words would be cut off. So there, and for people
 // who ask their device for less motion, it becomes an ordinary part of the
-// page: the finished box, then every step, all readable at once.
-const STILL_QUERY = "(max-height: 520px), (prefers-reduced-motion: reduce)";
+// page: the finished box, then every step, all readable at once. The height
+// is in em, so it also applies to people who set a larger text size.
+const STILL_QUERY = "(max-height: 32.5em), (prefers-reduced-motion: reduce)";
 // The same rules apply without JavaScript, when nothing can play the story.
 // They are !important to win over the layout classes and over the styles
 // the scroll code sets on each caption.
@@ -266,13 +267,13 @@ export default function BoxStory() {
                 suppressHydrationWarning
                 className="col-start-1 row-start-1 self-end opacity-0 will-change-transform"
               >
-                <p className="text-sm font-medium uppercase tracking-widest text-emerald-700">
+                <p className="text-sm font-medium uppercase tracking-widest text-emerald-800">
                   Step {k + 1}
                 </p>
                 <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
                   {step.title}
                 </h2>
-                <p className="mt-4 max-w-md text-lg leading-relaxed text-zinc-500 sm:text-xl">{step.body}</p>
+                <p className="mt-4 max-w-md text-lg leading-relaxed text-zinc-600 sm:text-xl">{step.body}</p>
               </div>
             ))}
           </div>

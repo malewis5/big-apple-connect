@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { NavLink } from "./nav-link";
 import { DISCLAIMER, SITE_NAME, SITE_URL, infoPages, type InfoPage } from "./site";
 
 export function infoPage(slug: string): InfoPage {
@@ -23,14 +24,14 @@ export function infoMetadata(slug: string): Metadata {
 export function SiteFooter({ className = "" }: { className?: string }) {
   return (
     <footer className={`px-6 pb-16 text-center text-sm leading-relaxed text-zinc-600 ${className}`}>
-      <nav aria-label="About this site" className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+      <nav aria-label="About this site" className="flex flex-wrap justify-center gap-x-2">
         {infoPages.map((page) => (
-          <Link key={page.slug} href={`/${page.slug}`} className="font-medium underline-offset-4 hover:text-zinc-900 hover:underline">
+          <NavLink key={page.slug} href={`/${page.slug}`} className="inline-flex min-h-11 min-w-11 items-center justify-center px-2 font-medium underline-offset-4 hover:text-zinc-900 hover:underline aria-[current=page]:text-zinc-900 aria-[current=page]:underline">
             {page.title}
-          </Link>
+          </NavLink>
         ))}
       </nav>
-      <p className="mx-auto mt-4 max-w-2xl">{DISCLAIMER}</p>
+      <p className="mx-auto mt-2 max-w-2xl">{DISCLAIMER}</p>
     </footer>
   );
 }
@@ -73,11 +74,11 @@ export default function InfoPageView({ slug }: { slug: string }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      <main id="main" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-6 pt-12 pb-24 outline-none">
+      <main id="main" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-6 pt-9 pb-24 outline-none">
         <nav aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-2 text-sm text-zinc-600">
             <li>
-              <Link href="/" className="font-medium underline-offset-4 hover:text-zinc-900 hover:underline">
+              <Link href="/" className="-mx-1.5 inline-flex min-h-11 min-w-11 items-center justify-center px-1.5 font-medium underline-offset-4 hover:text-zinc-900 hover:underline">
                 Home
               </Link>
             </li>
@@ -85,8 +86,8 @@ export default function InfoPageView({ slug }: { slug: string }) {
             <li aria-current="page">{page.title}</li>
           </ol>
         </nav>
-        <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-6xl">{page.title}</h1>
-        <p className="mt-6 text-xl leading-relaxed text-pretty text-zinc-500">{page.description}</p>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-6xl">{page.title}</h1>
+        <p className="mt-6 text-xl leading-relaxed text-pretty text-zinc-600">{page.description}</p>
         {page.sections.map((section) => (
           <section key={section.title} className="mt-14">
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{section.title}</h2>
@@ -96,10 +97,10 @@ export default function InfoPageView({ slug }: { slug: string }) {
               </p>
             ))}
             {section.links && (
-              <ul className="mt-5 space-y-2 text-lg">
+              <ul className="mt-3 text-lg">
                 {section.links.map((link) => (
                   <li key={link.href}>
-                    <a href={link.href} className="font-medium text-emerald-700 underline underline-offset-4 hover:text-emerald-900">
+                    <a href={link.href} className="inline-flex min-h-11 items-center font-medium text-emerald-800 underline underline-offset-4 hover:text-emerald-900">
                       {link.label}
                     </a>
                   </li>

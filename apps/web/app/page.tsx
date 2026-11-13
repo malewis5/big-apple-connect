@@ -132,16 +132,16 @@ export default function Home() {
       />
       <main id="main" tabIndex={-1} className="outline-none">
         <section className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center px-6 pb-20 text-center">
-          <p className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+          <p className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800">
             {hero.eyebrow}
           </p>
-          <h1 className="mt-6 max-w-4xl text-5xl font-semibold tracking-tight text-balance sm:text-7xl">
+          <h1 className="mt-6 w-full max-w-4xl text-5xl font-semibold tracking-tight text-balance break-words sm:text-7xl">
             {hero.title}
           </h1>
-          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-pretty text-zinc-500 sm:text-2xl">{hero.body}</p>
-          <div className="mt-16 flex flex-col items-center gap-2 text-sm text-zinc-500" aria-hidden="true">
+          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-pretty text-zinc-600 sm:text-2xl">{hero.body}</p>
+          <div className="mt-16 flex flex-col items-center gap-2 text-sm text-zinc-600" aria-hidden="true">
             Scroll to see how it works
-            <svg viewBox="0 0 20 20" className="size-5 motion-safe:animate-bounce" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg viewBox="0 0 20 20" className="size-5 motion-safe:animate-bounce motion-safe:[animation-iteration-count:3]" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M5 8l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
@@ -152,14 +152,14 @@ export default function Home() {
         <section className="bg-gradient-to-b from-white to-zinc-50 px-6 py-32">
           <div className="mx-auto max-w-6xl">
             <h2 className="text-4xl font-semibold tracking-tight sm:text-6xl">{whyItMatters.title}</h2>
-            <p className="mt-4 max-w-2xl text-xl leading-relaxed text-zinc-500">{whyItMatters.body}</p>
+            <p className="mt-4 max-w-2xl text-xl leading-relaxed text-zinc-600">{whyItMatters.body}</p>
             <div className="mt-16 grid gap-6 md:grid-cols-3">
               {whyItMatters.reasons.map((reason) => (
                 <div
                   key={reason.title}
-                  className="rounded-3xl bg-white p-8 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_16px_40px_-20px_rgb(0_0_0/0.18)] ring-1 ring-zinc-900/5"
+                  className="min-w-0 rounded-3xl bg-white p-8 break-words shadow-[0_1px_2px_rgb(0_0_0/0.04),0_16px_40px_-20px_rgb(0_0_0/0.18)] ring-1 ring-zinc-900/5"
                 >
-                  <Image src={reason.icon} alt="" width={480} height={480} className="-mt-4 -ml-4 size-48" />
+                  <Image src={reason.icon} alt="" width={480} height={480} className="-mt-4 -ml-4 size-48 max-w-full" />
                   <h3 className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xl font-semibold">
                     {reason.title}
                     {reason.later && (
@@ -168,7 +168,7 @@ export default function Home() {
                       </span>
                     )}
                   </h3>
-                  <p className="mt-3 text-lg leading-relaxed text-zinc-500">{reason.body}</p>
+                  <p className="mt-3 text-lg leading-relaxed text-zinc-600">{reason.body}</p>
                 </div>
               ))}
             </div>
@@ -178,7 +178,7 @@ export default function Home() {
         <section className="bg-zinc-50 px-6 pb-32">
           <div className="mx-auto max-w-3xl rounded-3xl bg-white px-8 py-14 text-center shadow-[0_1px_2px_rgb(0_0_0/0.04),0_16px_40px_-20px_rgb(0_0_0/0.18)] ring-1 ring-zinc-900/5 sm:px-16">
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">{status.title}</h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-zinc-500">{status.body}</p>
+            <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-zinc-600">{status.body}</p>
             <a
               href={REPO}
               className="mt-8 inline-flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-700"
@@ -194,8 +194,8 @@ export default function Home() {
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Questions and answers</h2>
             <div className="mt-10 divide-y divide-zinc-900/10 border-y border-zinc-900/10">
               {faqs.map((faq) => (
-                <details key={faq.question} className="group py-6">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-lg font-semibold [&::-webkit-details-marker]:hidden">
+                <details key={faq.question} className="group">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-semibold [&::-webkit-details-marker]:hidden">
                     <h3>{faq.question}</h3>
                     <svg
                       viewBox="0 0 20 20"
@@ -208,7 +208,7 @@ export default function Home() {
                       <path d="M5 8l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </summary>
-                  <p className="mt-3 text-lg leading-relaxed text-zinc-500">{faq.answer}</p>
+                  <p className="-mt-3 max-w-2xl pb-6 text-lg leading-relaxed text-zinc-600">{faq.answer}</p>
                 </details>
               ))}
             </div>

@@ -113,6 +113,10 @@ export const faqs = [
       "Big Apple Connect is a New York City program that provides free internet to NYCHA residents. The city says it exists to ensure NYCHA residents have free, fast, reliable and safe internet.",
   },
   {
+    question: "What is NYCHA?",
+    answer: "NYCHA is the New York City Housing Authority. It runs the city's public housing.",
+  },
+  {
     question: "Is this project run by the City of New York or NYCHA?",
     answer:
       "No. It is an independent, personal project. It is not affiliated with, endorsed by or run by the City of New York, NYCHA, or any internet provider. It is named for the program it was built to measure.",
@@ -120,7 +124,7 @@ export const faqs = [
   {
     question: "What does it measure?",
     answer:
-      "Download and upload speed, ping to the router, the provider and the wider internet, name lookup times, the route out of the home, and Wi-Fi signal. It also records the setup: cable or Wi-Fi, the router and modem, and the provider.",
+      "How fast your internet downloads and uploads. How long it takes to reach your router, your provider and the wider internet. That delay is called ping. How long it takes to look up a website's name, the route your data takes out of your home, and how strong your Wi-Fi signal is. It also records your setup: cable or Wi-Fi, your router and modem, and your provider.",
   },
   {
     question: "How is it different from a speed test on my phone?",
