@@ -1,6 +1,7 @@
 import Image from "next/image";
 import BoxStory from "./box-story";
-import { DISCLAIMER, REPO, SITE_DESCRIPTION, SITE_NAME, SITE_URL, faqs, hero, status, whyItMatters } from "./site";
+import { SiteFooter } from "./info-page";
+import { REPO, SITE_DESCRIPTION, SITE_NAME, SITE_URL, faqs, hero, status, whyItMatters } from "./site";
 
 // Structured data for search engines and AI answer engines. The FAQ entries
 // are the same ones shown on the page, as Google requires.
@@ -20,7 +21,9 @@ const jsonLd = {
       "@type": "Person",
       "@id": `${SITE_URL}/#author`,
       name: "Matt Lewis",
+      description: `Maker and maintainer of the ${SITE_NAME}, an independent, open-source project that measures home internet for NYCHA residents.`,
       url: "https://github.com/malewis5",
+      sameAs: ["https://github.com/malewis5"],
     },
     {
       "@type": "SoftwareApplication",
@@ -175,9 +178,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="bg-zinc-50 px-6 pb-16 text-center text-sm leading-relaxed text-zinc-600">
-        <p className="mx-auto max-w-2xl">{DISCLAIMER}</p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

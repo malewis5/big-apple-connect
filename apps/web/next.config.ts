@@ -30,6 +30,9 @@ const csp = [
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },
+  // Keeps other sites' windows from holding a handle on this one. The site
+  // opens no pop-ups. The toolbar on preview deployments signs in through one.
+  { key: "Cross-Origin-Opener-Policy", value: isPreview ? "same-origin-allow-popups" : "same-origin" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
