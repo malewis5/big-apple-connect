@@ -93,7 +93,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Set up Turborepo Remote Cache
-        uses: vercel/setup-turborepo-remote-cache-action@v1.0.0
+        uses: vercel/setup-turborepo-remote-cache-action@v1.1.0
         continue-on-error: true
         with:
           team: ${{ vars.TURBO_TEAM }}
@@ -117,7 +117,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Set up Turborepo Remote Cache
-        uses: vercel/setup-turborepo-remote-cache-action@v1.0.0
+        uses: vercel/setup-turborepo-remote-cache-action@v1.1.0
         continue-on-error: true
         with:
           team: ${{ vars.TURBO_TEAM }}
