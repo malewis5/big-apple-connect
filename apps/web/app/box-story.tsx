@@ -53,14 +53,6 @@ const steps: Step[] = [
   },
 ];
 
-// Fade the scene's edges so the arriving case and the cable never meet a
-// hard border.
-const fade = "transparent, black 10%, black 90%, transparent";
-const edgeFade = {
-  maskImage: `linear-gradient(to bottom, ${fade}), linear-gradient(to right, ${fade})`,
-  maskComposite: "intersect",
-} as const;
-
 // Where each step begins, for the progress bars. The last entry is the end.
 const STARTS = [0, 34, 90, 140, FRAMES - 1];
 
@@ -163,12 +155,21 @@ export default function BoxStory() {
           <div
             role="img"
             aria-label="A small Raspberry Pi computer is closed inside a white box. An internet cable and a power cable plug in, and a green light turns on."
-            className={`order-1 mx-auto aspect-square w-full max-w-[min(100%,60svh)] transition-opacity duration-700 lg:order-2 lg:max-w-[min(100%,80svh)] ${ready ? "opacity-100" : "opacity-0"}`}
-            style={edgeFade}
+            className={`relative order-1 mx-auto aspect-square w-full max-w-[min(100%,60svh)] transition-opacity duration-700 lg:order-2 lg:max-w-[min(100%,80svh)] ${ready ? "opacity-100" : "opacity-0"}`}
           >
             <SceneBoundary>
               <BoxScene frame={frame} onInvalidate={onInvalidate} onReady={onReady} />
             </SceneBoundary>
+            {/* Fade the edges into the white page so the arriving case and the
+                cables never meet a hard border. Static white gradients, not a
+                CSS mask: a mask over a canvas that redraws every frame is slow
+                to composite on iOS. */}
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+              <div className="absolute inset-x-0 top-0 h-[10%] bg-gradient-to-b from-white" />
+              <div className="absolute inset-x-0 bottom-0 h-[10%] bg-gradient-to-t from-white" />
+              <div className="absolute inset-y-0 left-0 w-[10%] bg-gradient-to-r from-white" />
+              <div className="absolute inset-y-0 right-0 w-[10%] bg-gradient-to-l from-white" />
+            </div>
           </div>
         </div>
       </div>
