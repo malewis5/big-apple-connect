@@ -17,7 +17,7 @@ and answered as soon as possible.
   they shouldn't go.
 - The website at <https://www.bigappleconnect.com>.
 - The release files: anything that would let a download differ from what the
-  release workflow built. [Verify a download](README.md#verify-a-download)
+  release workflow built. [Verify a download](apps/box/README.md#verify-a-download)
   explains how to check one.
 
 ## Supported versions

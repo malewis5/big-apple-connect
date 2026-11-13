@@ -10,7 +10,7 @@ Questions, problems, corrections and pull requests are welcome.
 
 ## Set up
 
-[Build from source](README.md#build-from-source) in the README lists what to
+[The repository](README.md#the-repository) in the README lists what to
 install and the commands to build, test and run both apps.
 
 ## Pull requests
