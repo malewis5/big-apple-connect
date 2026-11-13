@@ -6,6 +6,11 @@ on:
 
 permissions:
   contents: read
+  id-token: write # exchanged for a short-lived Vercel Remote Cache token
+
+# The Remote Cache step signs in to Vercel with GitHub's OIDC token, so no
+# secret is stored. Until the team's OIDC policy exists it fails without
+# stopping the job, and Turborepo falls back to running every task.
 
 jobs:
   # The collector, on every system it is released for.
@@ -17,6 +22,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
+      - name: Set up Turborepo Remote Cache
+        uses: vercel/setup-turborepo-remote-cache-action@v1.0.0
+        continue-on-error: true
+        with:
+          team: ${{ vars.TURBO_TEAM }}
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
@@ -34,6 +44,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - name: Set up Turborepo Remote Cache
+        uses: vercel/setup-turborepo-remote-cache-action@v1.0.0
+        continue-on-error: true
+        with:
+          team: ${{ vars.TURBO_TEAM }}
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
