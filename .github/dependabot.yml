@@ -1,0 +1,64 @@
+# Dependabot opens pull requests when a dependency has a newer version.
+# Security fixes come as soon as they exist, whatever the schedule here
+# (turned on in the repository's settings).
+#
+# Titles follow Conventional Commits, like the rest of the history. A change
+# to the measuring program's dependencies is a `fix`, so release-please
+# ships it in a new version; the rest is `chore` and releases nothing.
+version: 2
+
+updates:
+  # The website and the workspace tools (one pnpm lockfile at the root).
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    # Wait a week after a version is published before proposing it, so a
+    # bad or hijacked release has time to be caught.
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      # Next.js and its lint rules are pinned to the same version.
+      next:
+        patterns: ["next", "eslint-config-next"]
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+      # Every other small update in one pull request. Major versions come
+      # one at a time, since they can need code changes.
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  # The measuring program.
+  - package-ecosystem: gomod
+    directory: /apps/box
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: fix
+      include: scope
+    groups:
+      go:
+        update-types: [minor, patch]
+
+  # The actions the workflows use.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      actions:
+        patterns: ["*"]
