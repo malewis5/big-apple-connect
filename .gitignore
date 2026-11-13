@@ -12,3 +12,6 @@ design/box/out/
 
 # Demo video renders; rebuilt by design/demo/build_demo.py
 design/demo/out/
+
+# Python bytecode from the design scripts
+__pycache__/
