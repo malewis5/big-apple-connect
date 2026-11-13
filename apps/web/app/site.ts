@@ -66,6 +66,14 @@ export const status = {
   body: "The measuring software already runs on Mac and Linux, and we're still improving it. The box is next. Everything is free and open source, so anyone can see exactly how it works.",
 };
 
+// The words on the "page not found" (404) page. It isn't in the sitemap, so
+// it has no date.
+export const notFound = {
+  eyebrow: "Error 404",
+  title: "This page isn't here.",
+  body: "The address may be mistyped, or the page may have moved. The site is small, so everything is a click away.",
+};
+
 export const DISCLAIMER =
   "An independent, personal project. It is not affiliated with, endorsed by or run by the City of New York, NYCHA, or any internet provider.";
 
