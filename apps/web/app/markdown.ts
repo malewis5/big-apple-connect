@@ -1,5 +1,6 @@
 import {
   DISCLAIMER,
+  demoVideo,
   REPO,
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -29,13 +30,21 @@ related:
 
 # ${hero.title}
 
-${hero.eyebrow}.
+It is made for homes in New York City public housing.
 
 ${hero.body}
 
 ## How it works
 
 ${storySteps.map((step, k) => `${k + 1}. **${step.title}** ${step.body}`).join("\n")}
+
+## ${demoVideo.title}
+
+${demoVideo.body} The video's captions say:
+
+${demoVideo.transcript.map((line) => `> ${line}`).join("\n>\n")}
+
+The video plays on the home page: ${SITE_URL}/#demo. The video file is at ${SITE_URL}${demoVideo.files.mp4}, and its captions are at ${SITE_URL}${demoVideo.files.captions}.
 
 ## ${whyItMatters.title}
 
@@ -47,7 +56,7 @@ ${whyItMatters.reasons
 
 ## ${status.title}
 
-${status.body} Follow along on GitHub: ${REPO}
+${status.body} You can see the project on GitHub: ${REPO}
 
 ## Questions and answers
 
@@ -59,7 +68,7 @@ ${infoPages.map((page) => `- [${page.title}](${SITE_URL}/${page.slug}.md): ${pag
 
 ---
 
-${SITE_NAME}. ${DISCLAIMER}
+${DISCLAIMER}
 `;
 }
 
@@ -94,7 +103,7 @@ ${page.sections
 
 ---
 
-${SITE_NAME}. ${DISCLAIMER}
+${DISCLAIMER}
 `;
 }
 
@@ -102,7 +111,7 @@ ${SITE_NAME}. ${DISCLAIMER}
 export function notFoundMarkdown() {
   return `# Page not found (404)
 
-There is no page at this address on ${SITE_URL}. The site is small. These are all of its pages:
+There is no page at this address on ${SITE_URL}, and because the site is small, here are all of its pages:
 
 - [Home](${SITE_URL}/index.md): what the ${SITE_NAME} is and why it matters
 ${infoPages.map((page) => `- [${page.title}](${SITE_URL}/${page.slug}.md): ${page.description}`).join("\n")}

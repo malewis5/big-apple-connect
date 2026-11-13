@@ -1,13 +1,16 @@
 import Image from "next/image";
 import BoxStory from "./box-story";
+import DemoVideo from "./demo-video";
 import { SiteFooter } from "./info-page";
 import { GitHubIcon } from "./site-header";
+import { CARD, CONTAINER, SECTION_LEAD, SECTION_TITLE, SECTION_Y } from "./ui";
 import {
   REPO,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_TITLE,
   SITE_URL,
+  demoVideo,
   faqs,
   hero,
   status,
@@ -52,6 +55,7 @@ const jsonLd = {
       author: { "@id": `${SITE_URL}/#author` },
       hasPart: [
         { "@id": `${SITE_URL}/#how-it-works` },
+        { "@id": `${SITE_URL}/#video` },
         { "@id": `${SITE_URL}/#why-it-matters` },
         { "@id": `${SITE_URL}/#faq` },
       ],
@@ -60,7 +64,7 @@ const jsonLd = {
       "@type": "Person",
       "@id": `${SITE_URL}/#author`,
       name: "Matt Lewis",
-      description: `Maker and maintainer of the ${SITE_NAME}. It is an independent, open-source project that measures home internet for NYCHA residents.`,
+      description: `Matt Lewis makes and maintains the ${SITE_NAME} as an independent, open-source project that measures home internet for NYCHA residents.`,
       url: "https://github.com/malewis5",
       sameAs: AUTHOR_PROFILES,
     },
@@ -69,7 +73,7 @@ const jsonLd = {
       "@id": `${SITE_URL}/#software`,
       name: SITE_NAME,
       description:
-        "Open-source program that measures home internet speed, latency and reliability around the clock and saves the results as evidence.",
+        "An open-source program that measures home internet speed, latency and reliability on a regular schedule and saves the results on your own computer.",
       applicationCategory: "UtilitiesApplication",
       operatingSystem: "macOS, Linux, Raspberry Pi OS",
       isAccessibleForFree: true,
@@ -97,6 +101,36 @@ const jsonLd = {
         name: step.title,
         text: step.body,
       })),
+    },
+    // The demo video, with its captions as the transcript, so search engines
+    // and AI answer engines can show and quote it.
+    {
+      "@type": "VideoObject",
+      "@id": `${SITE_URL}/#video`,
+      name: `${SITE_NAME}: ${demoVideo.title}`,
+      description: demoVideo.body,
+      thumbnailUrl: [`${SITE_URL}${demoVideo.files.thumbnail}`, `${SITE_URL}${demoVideo.files.poster}`],
+      uploadDate: demoVideo.uploaded,
+      duration: demoVideo.duration,
+      contentUrl: `${SITE_URL}${demoVideo.files.mp4}`,
+      encodingFormat: "video/mp4",
+      width: 1280,
+      height: 720,
+      inLanguage: "en-US",
+      isFamilyFriendly: true,
+      isAccessibleForFree: true,
+      transcript: demoVideo.transcript.join(" "),
+      caption: {
+        "@type": "MediaObject",
+        contentUrl: `${SITE_URL}${demoVideo.files.captions}`,
+        encodingFormat: "text/vtt",
+        inLanguage: "en-US",
+      },
+      url: `${SITE_URL}/#demo`,
+      isPartOf: { "@id": `${SITE_URL}/#webpage` },
+      about: { "@id": `${SITE_URL}/#software` },
+      creator: { "@id": `${SITE_URL}/#author` },
+      publisher: { "@id": `${SITE_URL}/#author` },
     },
     // The three cards under "Why it matters".
     {
@@ -149,15 +183,17 @@ export default function Home() {
 
         <BoxStory />
 
-        <section className="bg-gradient-to-b from-white to-zinc-50 px-6 py-32">
-          <div className="mx-auto max-w-6xl">
-            <h2 className="text-4xl font-semibold tracking-tight sm:text-6xl">{whyItMatters.title}</h2>
-            <p className="mt-4 max-w-2xl text-xl leading-relaxed text-zinc-600">{whyItMatters.body}</p>
-            <div className="mt-16 grid gap-6 md:grid-cols-3">
+        <DemoVideo />
+
+        <section className={`bg-gradient-to-b from-white to-zinc-50 ${SECTION_Y}`}>
+          <div className={CONTAINER}>
+            <h2 className={SECTION_TITLE}>{whyItMatters.title}</h2>
+            <p className={SECTION_LEAD}>{whyItMatters.body}</p>
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
               {whyItMatters.reasons.map((reason) => (
                 <div
                   key={reason.title}
-                  className="min-w-0 rounded-3xl bg-white p-8 break-words shadow-[0_1px_2px_rgb(0_0_0/0.04),0_16px_40px_-20px_rgb(0_0_0/0.18)] ring-1 ring-zinc-900/5"
+                  className={`min-w-0 p-8 break-words ${CARD}`}
                 >
                   <Image src={reason.icon} alt="" width={480} height={480} className="-mt-4 -ml-4 size-48 max-w-full" />
                   <h3 className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xl font-semibold">
@@ -175,24 +211,29 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-zinc-50 px-6 pb-32">
-          <div className="mx-auto max-w-3xl rounded-3xl bg-white px-8 py-14 text-center shadow-[0_1px_2px_rgb(0_0_0/0.04),0_16px_40px_-20px_rgb(0_0_0/0.18)] ring-1 ring-zinc-900/5 sm:px-16">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">{status.title}</h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-zinc-600">{status.body}</p>
-            <a
-              href={REPO}
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-700"
-            >
-              <GitHubIcon className="size-4" />
-              Follow along on GitHub
-            </a>
+        {/* Part of "Why it matters" above, so it follows on without a full gap. */}
+        <section className="bg-zinc-50 pb-24 sm:pb-32">
+          <div className={CONTAINER}>
+            <div className={`p-8 sm:p-12 lg:flex lg:items-center lg:justify-between lg:gap-12 ${CARD}`}>
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{status.title}</h2>
+                <p className="mt-4 max-w-2xl text-lg leading-relaxed text-pretty text-zinc-600">{status.body}</p>
+              </div>
+              <a
+                href={REPO}
+                className="mt-8 inline-flex shrink-0 items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-700 lg:mt-0"
+              >
+                <GitHubIcon className="size-4" />
+                See the project on GitHub
+              </a>
+            </div>
           </div>
         </section>
 
-        <section id="faq" className="bg-zinc-50 px-6 pb-32">
-          <div className="mx-auto max-w-3xl">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Questions and answers</h2>
-            <div className="mt-10 divide-y divide-zinc-900/10 border-y border-zinc-900/10">
+        <section id="faq" className="bg-zinc-50 pb-24 sm:pb-32">
+          <div className={`${CONTAINER} lg:grid lg:grid-cols-[1fr_2fr] lg:items-start lg:gap-16`}>
+            <h2 className={SECTION_TITLE}>Questions and answers</h2>
+            <div className="mt-10 divide-y divide-zinc-900/10 border-y border-zinc-900/10 lg:mt-0">
               {faqs.map((faq) => (
                 <details key={faq.question} className="group">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-semibold [&::-webkit-details-marker]:hidden">
