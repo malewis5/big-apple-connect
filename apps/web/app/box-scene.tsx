@@ -1,8 +1,8 @@
 "use client";
 
-import { ContactShadows, Environment, Lightformer, SoftShadows, useGLTF } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer, PerformanceMonitor, SoftShadows, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { type RefObject, useEffect, useLayoutEffect, useRef } from "react";
+import { type RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   AnimationMixer,
   Color,
@@ -35,12 +35,16 @@ type Props = {
 };
 
 export default function BoxScene({ frame, onInvalidate, onReady }: Props) {
+  // Phones get a lighter scene: fewer pixels, a smaller shadow map and no
+  // contact-hardening shadows. If frames still drop, the resolution falls.
+  const [phone] = useState(() => window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0);
+  const [dpr, setDpr] = useState<number | [number, number]>([1, phone ? 1.5 : 2]);
   return (
     <Canvas
       orthographic
       shadows
       frameloop="demand"
-      dpr={[1, 2]}
+      dpr={dpr}
       gl={{ antialias: true, alpha: true }}
       camera={{ position: TARGET.clone().add(new Vector3(1, 1, 1)), near: 0.01, far: 10 }}
       onCreated={({ gl }) => {
@@ -49,15 +53,16 @@ export default function BoxScene({ frame, onInvalidate, onReady }: Props) {
         gl.toneMappingExposure = 1.05;
       }}
     >
+      <PerformanceMonitor onDecline={() => setDpr(1)} />
       <Isometric />
       <Redraw onInvalidate={onInvalidate} />
-      <Lighting />
+      <Lighting phone={phone} />
       <Box frame={frame} onReady={onReady} />
       {/* Nudged toward the viewer so the shadow shows past the base. */}
       <ContactShadows
         position={[0.004, 0.0002, 0.006]}
         scale={0.3}
-        resolution={512}
+        resolution={phone ? 256 : 512}
         blur={3.2}
         far={0.05}
         opacity={0.6}
@@ -91,12 +96,13 @@ function Redraw({ onInvalidate }: Pick<Props, "onInvalidate">) {
 // top brightest, the front face (screen left) lit, the end (screen right) in
 // shade. The environment is built from local light panels, so nothing is
 // downloaded.
-function Lighting() {
+function Lighting({ phone }: { phone: boolean }) {
   return (
     <>
       <ambientLight intensity={0.15} />
-      {/* Soft shadows let parts shade the board and the case shade the ground. */}
-      <SoftShadows size={26} samples={16} focus={0.4} />
+      {/* Soft shadows let parts shade the board and the case shade the ground.
+          The contact-hardening filter costs too much on phones. */}
+      {!phone && <SoftShadows size={26} samples={16} focus={0.4} />}
       {/* Soft neutral light from the top left of the frame, with a sky-to-ground
           fill so shaded sides stay gentle. */}
       <hemisphereLight args={["#ffffff", "#e9e4dc", 0.55]} />
@@ -104,7 +110,7 @@ function Lighting() {
         position={[-0.2, 0.6, 0.22]}
         intensity={1.9}
         castShadow
-        shadow-mapSize={[4096, 4096]}
+        shadow-mapSize={phone ? [1024, 1024] : [4096, 4096]}
         shadow-camera-left={-0.11}
         shadow-camera-right={0.11}
         shadow-camera-top={0.11}
@@ -165,6 +171,7 @@ function Box({ frame, onReady }: Pick<Props, "frame" | "onReady">) {
     shellShadow: MeshDepthMaterial;
     end: number;
   } | null>(null);
+  const shown = useRef<number | null>(null); // the frame on screen, easing toward the scroll position
 
   // Set up the motion and the materials once the model has loaded. three.js
   // objects are mutable by design, so they live in a ref, not in render.
@@ -239,10 +246,18 @@ function Box({ frame, onReady }: Pick<Props, "frame" | "onReady">) {
     };
   }, [scene, animations, onReady]);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (!rig.current) return;
     const { mixer, light, shell, shellMaterials, shellShadow, end } = rig.current;
-    const f = frame.current;
+    // Ease toward the scroll position instead of jumping to it. Phones send
+    // scroll updates unevenly, and jumps between them read as lag. The ease
+    // is time-based, so it feels the same at any frame rate.
+    const target = frame.current;
+    const previous = shown.current ?? target;
+    let f = previous + (target - previous) * (1 - Math.exp(-delta * 14));
+    if (Math.abs(target - f) < 0.01) f = target;
+    else state.invalidate(); // keep drawing until it catches up
+    shown.current = f;
     // Clips loop, so a time exactly at the end would jump back to the start.
     mixer.setTime(Math.min((f + 1) / FPS, end - 0.001));
     // Ease the shell and its shadow in together as it starts to drop.
