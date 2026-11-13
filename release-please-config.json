@@ -8,6 +8,8 @@
   "packages": {
     ".": {
       "exclude-paths": [
+        ".github",
+        "README.md",
         "apps/web",
         "design",
         ".gitignore",
