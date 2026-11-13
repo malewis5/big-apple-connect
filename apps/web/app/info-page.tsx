@@ -19,9 +19,10 @@ export function infoMetadata(slug: string): Metadata {
 }
 
 // Links to the About, Contact and Privacy pages, shown at the foot of every page.
-export function SiteFooter() {
+// The home page ends on light grey, so it passes that in to match.
+export function SiteFooter({ className = "" }: { className?: string }) {
   return (
-    <footer className="bg-zinc-50 px-6 pb-16 text-center text-sm leading-relaxed text-zinc-600">
+    <footer className={`px-6 pb-16 text-center text-sm leading-relaxed text-zinc-600 ${className}`}>
       <nav aria-label="About this site" className="flex flex-wrap justify-center gap-x-6 gap-y-2">
         {infoPages.map((page) => (
           <Link key={page.slug} href={`/${page.slug}`} className="font-medium underline-offset-4 hover:text-zinc-900 hover:underline">
@@ -37,40 +38,54 @@ export function SiteFooter() {
 // The layout shared by the About, Contact and Privacy pages.
 export default function InfoPageView({ slug }: { slug: string }) {
   const page = infoPage(slug);
-  // Tells search engines and AI answer engines what kind of page this is.
+  // Tells search engines and AI answer engines what kind of page this is, and
+  // where it sits in the site. The breadcrumb entry matches the trail of
+  // links shown above the page title, and lets Google show that trail in
+  // search results in place of the bare web address.
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": slug === "about" ? "AboutPage" : slug === "contact" ? "ContactPage" : "WebPage",
-    "@id": `${SITE_URL}/${slug}#page`,
-    url: `${SITE_URL}/${slug}`,
-    name: `${page.title} | ${SITE_NAME}`,
-    description: page.description,
-    inLanguage: "en-US",
-    isPartOf: { "@id": `${SITE_URL}/#website` },
-    about: { "@id": `${SITE_URL}/#software` },
+    "@graph": [
+      {
+        "@type": slug === "about" ? "AboutPage" : slug === "contact" ? "ContactPage" : "WebPage",
+        "@id": `${SITE_URL}/${slug}#page`,
+        url: `${SITE_URL}/${slug}`,
+        name: `${page.title} | ${SITE_NAME}`,
+        description: page.description,
+        inLanguage: "en-US",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        about: { "@id": `${SITE_URL}/#software` },
+        breadcrumb: { "@id": `${SITE_URL}/${slug}#breadcrumb` },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${SITE_URL}/${slug}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: page.title, item: `${SITE_URL}/${slug}` },
+        ],
+      },
+    ],
   };
 
   return (
-    <div className="flex flex-1 flex-col bg-zinc-50 text-zinc-900">
+    <div className="flex flex-1 flex-col bg-white text-zinc-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:bg-zinc-900 focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white"
-      >
-        Skip to main content
-      </a>
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
-        <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
-          <span className="size-2.5 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgb(16_185_129/0.15)]" />
-          {SITE_NAME}
-        </Link>
-      </header>
-
       <main id="main" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-6 pt-12 pb-24 outline-none">
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl">{page.title}</h1>
+        <nav aria-label="Breadcrumb">
+          <ol className="flex flex-wrap items-center gap-2 text-sm text-zinc-600">
+            <li>
+              <Link href="/" className="font-medium underline-offset-4 hover:text-zinc-900 hover:underline">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page">{page.title}</li>
+          </ol>
+        </nav>
+        <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-6xl">{page.title}</h1>
         <p className="mt-6 text-xl leading-relaxed text-pretty text-zinc-500">{page.description}</p>
         {page.sections.map((section) => (
           <section key={section.title} className="mt-14">
