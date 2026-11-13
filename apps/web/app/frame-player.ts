@@ -109,6 +109,7 @@ export class FramePlayer {
     this.abort.abort();
     this.bitmaps.forEach((bitmap) => bitmap?.close());
     this.bitmaps.length = 0;
+    this.blobs.length = 0;
   }
 
   private wanted(f: number) {
@@ -118,6 +119,9 @@ export class FramePlayer {
   // Decode downloaded frames near the current one, nearest first, and free
   // the ones that drifted out of range.
   private decodeNearby() {
+    // A decode that finishes after dispose() calls back in here; without this
+    // it would decode, close and retry the same frames forever.
+    if (this.abort.signal.aborted) return;
     this.bitmaps.forEach((bitmap, f) => {
       if (bitmap && !this.wanted(f)) {
         bitmap.close();
