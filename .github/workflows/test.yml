@@ -24,9 +24,11 @@ permissions:
 jobs:
   # Works out which apps the change touches, so a website change doesn't
   # test the collector on three systems, and the other way around.
-  # Turborepo counts shared files too: turbo.json or the root package.json
-  # affect both apps, and a lockfile change affects only the apps whose
-  # dependencies moved. A change to this workflow runs everything.
+  # Turborepo counts some shared files: turbo.json affects both apps, and a
+  # lockfile change affects only the apps whose dependencies moved. It
+  # doesn't count every root file (a packageManager bump or a
+  # pnpm-workspace.yaml change looks like no change at all), so changes to
+  # those, or to this workflow, run everything.
   changes:
     runs-on: ubuntu-latest
     outputs:
@@ -39,15 +41,25 @@ jobs:
           filter: blob:none
       - id: affected
         env:
-          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
         run: |
           turbo="npx --yes turbo@$(jq -r '.devDependencies.turbo' package.json | tr -d '^~')"
+          # A pull request is tested as merged into main, and that merge's
+          # first parent is the main it was merged with. The event's own base
+          # SHA can be older (after a reopen, say), so don't use it.
+          if [ "$EVENT" = pull_request ]; then
+            BASE=$(git rev-parse HEAD^1)
+          else
+            BASE=$BEFORE
+          fi
+          echo "Comparing $BASE..$(git rev-parse HEAD)"
           all=false
           if [ -z "$BASE" ] || [ "$BASE" = 0000000000000000000000000000000000000000 ]; then
             echo "No base to compare with; testing everything"
             all=true
-          elif ! git diff --quiet "$BASE" HEAD -- .github/workflows/test.yml; then
-            echo "This workflow changed; testing everything"
+          elif ! git diff --quiet "$BASE" HEAD -- .github/workflows/test.yml package.json pnpm-workspace.yaml; then
+            echo "This workflow or the workspace setup changed; testing everything"
             all=true
           fi
           for app in box web; do
