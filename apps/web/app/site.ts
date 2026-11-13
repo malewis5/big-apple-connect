@@ -14,9 +14,14 @@ export const REPO = "https://github.com/malewis5/big-apple-connect-box";
 export const HOME_UPDATED = "2026-11-13";
 
 // The page's words, shared by the HTML page and its Markdown version (/index.md).
+// The title's two lines. It always breaks after "internet", so "as good as
+// promised" stays together; the page sizes the title so that line fits.
+const heroTitleLines = ["Is your internet", "as good as promised?"] as const;
+
 export const hero = {
   eyebrow: "For homes in New York City public housing",
-  title: "Is your internet as good as promised?",
+  title: heroTitleLines.join(" "),
+  titleLines: heroTitleLines,
   body: "New York City promises NYCHA residents free, fast and reliable internet, and we're building a small box that lets you check that promise at home.",
 };
 

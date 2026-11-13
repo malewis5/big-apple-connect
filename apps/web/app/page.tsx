@@ -169,8 +169,13 @@ export default function Home() {
           <p className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800">
             {hero.eyebrow}
           </p>
-          <h1 className="mt-6 w-full max-w-4xl text-[2.75rem] leading-[1.05] font-semibold tracking-tight text-balance break-words sm:text-7xl">
-            {hero.title}
+          {/* Two lines on every screen. The longer line is about 10em wide, so
+              the size is a tenth of the column (the screen less its 3rem of
+              padding), between 1.75rem and the desktop's 4.5rem. On the very
+              narrowest screens the second line may still wrap, evenly. */}
+          <h1 className="mt-6 w-full max-w-4xl text-[clamp(1.75rem,calc((100vw_-_3rem)/10),4.5rem)] leading-[1.05] font-semibold tracking-tight text-balance break-words">
+            <span className="block">{hero.titleLines[0]}</span>{" "}
+            <span className="block">{hero.titleLines[1]}</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-zinc-600 sm:text-2xl">{hero.body}</p>
           <div className="mt-12 flex flex-col items-center gap-2 text-sm text-zinc-600" aria-hidden="true">
