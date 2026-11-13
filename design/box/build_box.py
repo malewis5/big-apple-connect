@@ -12,8 +12,9 @@ Run from the repository root:
 
 Options after `--`: --res N (square, default 1080), --samples N (default 64).
 
-Writes the model and its motion to apps/web/public/box/box.glb, which the
-website plays as you scroll, and box.blend, still-NNN.png and frames/NNNN.png
+Writes the model and its motion to apps/web/public/box/box.glb, which
+apps/web/scripts/build-frames.mjs renders into the frames the website plays
+as you scroll, and box.blend, still-NNN.png and frames/NNNN.png
 (transparent background) to design/box/out/. Compress the model before
 committing it (about 1.2 MB down to about 0.3 MB):
 
@@ -34,7 +35,7 @@ from mathutils import Matrix, Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "out")
-# The website loads the model from here and plays it as you scroll.
+# The website renders its scroll story frames from this model.
 WEB_GLB = os.path.join(HERE, "..", "..", "apps", "web", "public", "box", "box.glb")
 FPS = 30
 FRAMES = 180

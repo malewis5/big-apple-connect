@@ -283,12 +283,20 @@ design/box/    Blender scripts that build the box's 3D model and the website's i
 ```
 
 The 3D model is made by a script, not by hand. With
-[Blender](https://www.blender.org) installed, rebuild it and compress it for
-the website:
+[Blender](https://www.blender.org) installed, rebuild it and compress it:
 
 ```sh
 /Applications/Blender.app/Contents/MacOS/Blender -b -P design/box/build_box.py
 npx @gltf-transform/cli meshopt apps/web/public/box/box.glb apps/web/public/box/box.glb
+```
+
+The website doesn't run the 3D scene for visitors. It plays image frames
+rendered from it, so the story scrolls smoothly on any phone and connection.
+After changing the model or the scene in `apps/web/app/capture/`, render the
+frames again (needs Google Chrome):
+
+```sh
+pnpm --filter web build:frames
 ```
 
 To install only the measuring program, with [Go](https://go.dev):

@@ -9,3 +9,6 @@ dist/
 
 # Blender output; rebuilt by design/box/build_box.py
 design/box/out/
+
+# Demo video renders; rebuilt by design/demo/build_demo.py
+design/demo/out/
