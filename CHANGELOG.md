@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.3](https://github.com/malewis5/big-apple-connect-box/compare/v0.0.2...v0.0.3) (2026-11-13)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/net from 0.49.0 to 0.55.0 in /apps/box ([#14](https://github.com/malewis5/big-apple-connect-box/issues/14)) ([377276f](https://github.com/malewis5/big-apple-connect-box/commit/377276f494e446c68e6b66ab4447af615c6e7460))
+* **deps:** update every dependency in one go ([#25](https://github.com/malewis5/big-apple-connect-box/issues/25)) ([fd18f5e](https://github.com/malewis5/big-apple-connect-box/commit/fd18f5e57930a2acf138834676d35d36597ad02c))
+
 ## [0.0.2](https://github.com/malewis5/big-apple-connect-box/compare/v0.0.1...v0.0.2) (2026-11-12)
 
 
