@@ -6,3 +6,6 @@ node_modules/
 .turbo/
 bin/
 dist/
+
+# Blender output; rebuilt by design/box/build_box.py
+design/box/out/

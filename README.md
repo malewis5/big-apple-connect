@@ -277,8 +277,18 @@ From a device's pages it keeps the labelled maker, model and serial rows.
 The repository is a [Turborepo](https://turborepo.dev) with two apps:
 
 ```
-apps/box/    the measuring program, in Go
-apps/web/    the website, in Next.js (a starter page for now)
+apps/box/      the measuring program, in Go
+apps/web/      the website, in Next.js: a page that shows the box coming together as you scroll
+design/box/    Blender scripts that build the box's 3D model and the website's icons
+```
+
+The 3D model is made by a script, not by hand. With
+[Blender](https://www.blender.org) installed, rebuild it and compress it for
+the website:
+
+```sh
+/Applications/Blender.app/Contents/MacOS/Blender -b -P design/box/build_box.py
+npx @gltf-transform/cli meshopt apps/web/public/box/box.glb apps/web/public/box/box.glb
 ```
 
 To install only the measuring program, with [Go](https://go.dev):
