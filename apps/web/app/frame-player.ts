@@ -62,7 +62,7 @@ export class FramePlayer {
   private skipOdd: boolean;
   private center = 0;
   private drawn = -1;
-  private loading = false;
+  private loading: "no" | "one" | "all" = "no";
   private queue: number[] = [];
 
   constructor(
@@ -77,10 +77,13 @@ export class FramePlayer {
   }
 
   // Start downloading, nearest `from` first. Safe to call more than once.
-  load(from: number) {
-    if (this.loading) return;
-    this.loading = true;
-    const queue = (this.queue = downloadOrder(Math.round(from)));
+  // With `only`, download just that frame, for when the story stands still;
+  // a later call without it downloads the rest.
+  load(from: number, only = false) {
+    if (this.loading === "all" || (only && this.loading === "one")) return;
+    this.loading = only ? "one" : "all";
+    const first = Math.round(from);
+    const queue = (this.queue = only ? [first] : downloadOrder(first).filter((f) => !this.blobs[f]));
     const started = performance.now();
     let received = 0;
     const next = async (): Promise<void> => {
