@@ -91,9 +91,10 @@ export default function DemoVideo() {
   }, []);
 
   // Captions in the page's own style. Browsers draw captions their own way
-  // (Chrome ignores a caption background), so the track runs hidden and the
-  // page draws each line as the same white pill as the shared copies. In
-  // full screen, where nothing of the page shows, the browser draws them.
+  // (Chrome ignores a caption background), so CSS hides the native cues inline
+  // and the page draws each line as the same white pill as the shared copies.
+  // Keep the track showing so the player's caption menu reflects its state.
+  // In full screen, where nothing of the page shows, the browser draws them.
   // Turning captions off in the player's menu turns the pill off too.
   useEffect(() => {
     const el = video.current;
@@ -111,7 +112,8 @@ export default function DemoVideo() {
     const sync = () => {
       if (track.mode === "disabled") on = false;
       else on = true;
-      const want = on && fullScreen() ? "showing" : on ? "hidden" : "disabled";
+      el.classList.toggle("demo-inline-captions", !fullScreen());
+      const want = on ? "showing" : "disabled";
       if (track.mode !== want) setTrackMode(track, want); // fires change again, which then matches
       show();
     };
