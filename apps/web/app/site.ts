@@ -2,7 +2,8 @@
 // the sitemap. bigappleconnect.com redirects to the www host, so www is canonical.
 export const SITE_URL = "https://www.bigappleconnect.com";
 export const SITE_NAME = "Big Apple Connect Box";
-export const SITE_TITLE = "Big Apple Connect Box: Is your NYCHA internet as good as promised?";
+export const SITE_TITLE =
+  "Big Apple Connect Box: Is your NYCHA internet as good as promised?";
 export const SITE_DESCRIPTION =
   "A free, open-source box that measures home internet speed and reliability day and night, so NYCHA residents can check New York City's Big Apple Connect promise and keep the proof.";
 export const REPO = "https://github.com/malewis5/big-apple-connect-box";
@@ -29,7 +30,7 @@ export const storySteps = [
     body: "A plain white case keeps it safe. It's small enough to sit right next to your router.",
   },
   {
-    title: "Plug it into your router.",
+    title: "You plug it into your router.",
     body: "One cable connects the box to your router. Plug the other into the wall for power, like a phone charger.",
   },
   {
@@ -78,8 +79,18 @@ export const notFound = {
     title: "Quick check",
     done: "Done",
     rows: [
-      { label: "Your internet", value: "Working", ok: true, note: "You reached us, so your connection is fine." },
-      { label: "Our website", value: "Working", ok: true, note: "Everything else is up and running." },
+      {
+        label: "Your internet",
+        value: "Working",
+        ok: true,
+        note: "You reached us, so your connection is fine.",
+      },
+      {
+        label: "Our website",
+        value: "Working",
+        ok: true,
+        note: "Everything else is up and running.",
+      },
       { label: "This page", value: "Not here", ok: false, note: "" },
     ],
   },
@@ -182,7 +193,10 @@ export const infoPages: InfoPage[] = [
           "The city says the program exists to ensure NYCHA residents have free, fast, reliable and safe internet. A promise like that is worth checking, and the place to check it is inside the home, where people use the connection.",
         ],
         links: [
-          { label: "Big Apple Connect on the city's website", href: "https://access.nyc.gov/programs/big-apple-connect/" },
+          {
+            label: "Big Apple Connect on the city's website",
+            href: "https://access.nyc.gov/programs/big-apple-connect/",
+          },
         ],
       },
       {
@@ -191,7 +205,12 @@ export const infoPages: InfoPage[] = [
           "Matt Lewis makes and maintains the project by himself, in his own time. It is an independent, personal project. It is not affiliated with, endorsed by or run by the City of New York, NYCHA, or any internet provider.",
           "Nobody pays for it and it sells nothing. The code is released under the 0BSD license, so anyone can use, copy and change it for any purpose.",
         ],
-        links: [{ label: "Matt Lewis on GitHub", href: "https://github.com/malewis5" }],
+        links: [
+          {
+            label: "Matt Lewis on GitHub",
+            href: "https://github.com/malewis5",
+          },
+        ],
       },
       {
         title: "How it measures",
@@ -199,8 +218,14 @@ export const infoPages: InfoPage[] = [
           "The measurements follow Netrics. Netrics is the open-source software used in the University of Chicago's home broadband study. The schedule, settings and result names match, so results from different homes and cities can be compared. Speed is measured with Measurement Lab's open NDT7 speed test.",
         ],
         links: [
-          { label: "Netrics", href: "https://github.com/internet-innovation/netrics" },
-          { label: "How it measures, in full", href: `${REPO}#how-it-measures` },
+          {
+            label: "Netrics",
+            href: "https://github.com/internet-innovation/netrics",
+          },
+          {
+            label: "How it measures, in full",
+            href: `${REPO}#how-it-measures`,
+          },
         ],
       },
       {
@@ -230,7 +255,10 @@ export const infoPages: InfoPage[] = [
         ],
         links: [
           { label: "Open an issue", href: `${REPO}/issues` },
-          { label: "How to propose a change", href: `${REPO}/blob/main/CONTRIBUTING.md` },
+          {
+            label: "How to propose a change",
+            href: `${REPO}/blob/main/CONTRIBUTING.md`,
+          },
         ],
       },
       {
@@ -239,7 +267,10 @@ export const infoPages: InfoPage[] = [
           "Please report a security problem privately, not in a public issue. GitHub's private report form reaches only the maintainer. Say what you found and how to reproduce it.",
         ],
         links: [
-          { label: "Open a private security report", href: `${REPO}/security/advisories/new` },
+          {
+            label: "Open a private security report",
+            href: `${REPO}/security/advisories/new`,
+          },
           { label: "Security policy", href: `${REPO}/blob/main/SECURITY.md` },
         ],
       },
@@ -256,7 +287,10 @@ export const infoPages: InfoPage[] = [
           "This project cannot sign you up for Big Apple Connect, fix an outage or change your service. For those, contact your internet provider or the city's program.",
         ],
         links: [
-          { label: "Big Apple Connect on the city's website", href: "https://access.nyc.gov/programs/big-apple-connect/" },
+          {
+            label: "Big Apple Connect on the city's website",
+            href: "https://access.nyc.gov/programs/big-apple-connect/",
+          },
         ],
       },
     ],
@@ -281,8 +315,14 @@ export const infoPages: InfoPage[] = [
           "The site uses Vercel Web Analytics and Vercel Speed Insights to count visits and to see how fast pages load. They do not use cookies and do not follow you to other websites. The project sees totals, such as how many visits a page had and from which country, not who visited.",
         ],
         links: [
-          { label: "Vercel's privacy policy", href: "https://vercel.com/legal/privacy-policy" },
-          { label: "How Vercel Web Analytics treats privacy", href: "https://vercel.com/docs/analytics/privacy-policy" },
+          {
+            label: "Vercel's privacy policy",
+            href: "https://vercel.com/legal/privacy-policy",
+          },
+          {
+            label: "How Vercel Web Analytics treats privacy",
+            href: "https://vercel.com/docs/analytics/privacy-policy",
+          },
         ],
       },
       {
@@ -293,7 +333,10 @@ export const infoPages: InfoPage[] = [
           "Measurement Lab runs the speed test (NDT7). Measurement Lab publishes the results of every test it runs, including the internet address tested, as open data for research. ipinfo.io is asked for your public address and who it is registered to. api.macvendors.com is sent the first half of your router's hardware address, which names its maker and not your device. The program also pings 1.1.1.1, 8.8.8.8 and www.google.com, traces the route to 1.1.1.1, and looks up five well-known site names using 8.8.8.8.",
         ],
         links: [
-          { label: "Measurement Lab's privacy policy", href: "https://www.measurementlab.net/privacy/" },
+          {
+            label: "Measurement Lab's privacy policy",
+            href: "https://www.measurementlab.net/privacy/",
+          },
           { label: "What a scan records", href: `${REPO}#what-a-scan-records` },
         ],
       },
@@ -303,7 +346,10 @@ export const infoPages: InfoPage[] = [
           "The code, the downloads and the issue tracker are on GitHub. What you post in an issue is public, and GitHub's own privacy statement covers your use of it.",
         ],
         links: [
-          { label: "GitHub's privacy statement", href: "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" },
+          {
+            label: "GitHub's privacy statement",
+            href: "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+          },
         ],
       },
       {
