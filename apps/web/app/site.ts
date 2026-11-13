@@ -7,6 +7,11 @@ export const SITE_DESCRIPTION =
   "A free, open-source box that measures home internet speed and reliability day and night, so NYCHA residents can check New York City's Big Apple Connect promise and keep the proof.";
 export const REPO = "https://github.com/malewis5/big-apple-connect-box";
 
+// The day the home page's words last changed, as YYYY-MM-DD. The sitemap
+// tells search engines this date, so change it whenever the words below
+// change. Each page in infoPages has its own `updated`.
+export const HOME_UPDATED = "2026-11-13";
+
 // The page's words, shared by the HTML page and its Markdown version (/index.md).
 export const hero = {
   eyebrow: "For homes in New York City public housing",
@@ -134,6 +139,8 @@ export type InfoPage = {
   slug: string;
   title: string;
   description: string;
+  // The day this page's words last changed, as YYYY-MM-DD, for the sitemap.
+  updated: string;
   sections: {
     title: string;
     paragraphs: string[];
@@ -145,6 +152,7 @@ export const infoPages: InfoPage[] = [
   {
     slug: "about",
     title: "About",
+    updated: "2026-11-13",
     description:
       "Who makes the Big Apple Connect Box, why, and how far along it is. An independent, open-source project to check New York City's promise of fast, reliable internet for NYCHA residents.",
     sections: [
@@ -191,6 +199,7 @@ export const infoPages: InfoPage[] = [
   {
     slug: "contact",
     title: "Contact",
+    updated: "2026-11-13",
     description:
       "How to reach the maker of the Big Apple Connect Box: questions, problems, corrections, security reports, and where to go for help with Big Apple Connect service itself.",
     sections: [
@@ -236,6 +245,7 @@ export const infoPages: InfoPage[] = [
   {
     slug: "privacy",
     title: "Privacy",
+    updated: "2026-11-13",
     description:
       "What the Big Apple Connect Box website and measuring program record, where it is kept, and which outside services they contact. The project does not collect your measurements.",
     sections: [
