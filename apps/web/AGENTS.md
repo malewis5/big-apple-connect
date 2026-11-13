@@ -12,6 +12,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 The words people read are in `app/site.ts`. When you write or change them:
 
+- Set that page's date to today: `HOME_UPDATED` for the home page, `updated`
+  for About, Contact and Privacy. The sitemap reports it to search engines.
 - Don't name a thing and then describe it after a comma: "Big Apple Connect,
   the city's program" or "Netrics, the open-source software used in...". The
   other order is out too: "its maker, Matt Lewis". Use the name alone, or say
