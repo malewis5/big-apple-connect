@@ -302,7 +302,7 @@ export default function BoxStory() {
           <div
             data-picture
             role="img"
-            aria-label="A small Raspberry Pi computer is closed inside a white box. An internet cable and a power cable plug in, and a green light turns on."
+            aria-label="A small Raspberry Pi computer is closed inside a white box, and once an internet cable and a power cable plug in, a green light turns on."
             className="relative aspect-square w-[min(100cqw,100cqh)] lg:max-w-[80svh]"
           >
             <noscript>
