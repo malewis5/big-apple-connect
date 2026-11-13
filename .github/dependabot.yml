@@ -18,13 +18,20 @@ updates:
     # bad or hijacked release has time to be caught.
     cooldown:
       default-days: 7
+    open-pull-requests-limit: 5
     commit-message:
       prefix: chore
       include: scope
-    # One pull request a week with every update in it, not one per package.
     groups:
-      all:
-        patterns: ["*"]
+      # Next.js and its lint rules are pinned to the same version.
+      next:
+        patterns: ["next", "eslint-config-next"]
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+      # Every other small update in one pull request. Major versions come
+      # one at a time, since they can need code changes.
+      minor-and-patch:
+        update-types: [minor, patch]
     ignore:
       # Next.js's lint rules can't run on these yet: typescript-eslint stops
       # at TypeScript 6, and three of its plugins stop at ESLint 9. Remove
@@ -46,8 +53,8 @@ updates:
       prefix: fix
       include: scope
     groups:
-      all:
-        patterns: ["*"]
+      go:
+        update-types: [minor, patch]
 
   # The actions the workflows use.
   - package-ecosystem: github-actions
