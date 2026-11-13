@@ -66,6 +66,25 @@ export const status = {
   body: "The measuring software already runs on Mac and Linux, and we're still improving it. The box is next. Everything is free and open source, so anyone can see exactly how it works.",
 };
 
+// The words on the "page not found" (404) page. It isn't in the sitemap, so
+// it has no date.
+// Most visitors worry about their internet, so the page says first that
+// theirs is fine.
+export const notFound = {
+  eyebrow: "Page not found",
+  title: "We can't find that page.",
+  body: "Your internet is fine. This page just isn't here. It may have moved, or the address may have a typo.",
+  check: {
+    title: "Quick check",
+    done: "Done",
+    rows: [
+      { label: "Your internet", value: "Working", ok: true, note: "You reached us, so your connection is fine." },
+      { label: "Our website", value: "Working", ok: true, note: "Everything else is up and running." },
+      { label: "This page", value: "Not here", ok: false, note: "" },
+    ],
+  },
+};
+
 export const DISCLAIMER =
   "An independent, personal project. It is not affiliated with, endorsed by or run by the City of New York, NYCHA, or any internet provider.";
 
