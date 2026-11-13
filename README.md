@@ -1,7 +1,8 @@
 # big-apple-connect-box
 
 Is your home internet as fast and reliable as it should be? This project helps
-you find out, and keeps the proof.
+you find out, and keeps the proof. See how it works at
+[bigappleconnect.com](https://www.bigappleconnect.com).
 
 New York City launched Big Apple Connect
 ["to ensure that NYCHA residents have access to free, fast, reliable, and safe internet."](https://access.nyc.gov/programs/big-apple-connect/)
