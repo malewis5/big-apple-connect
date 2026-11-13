@@ -112,10 +112,10 @@ export default function Home() {
                   className="rounded-3xl bg-white p-8 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_16px_40px_-20px_rgb(0_0_0/0.18)] ring-1 ring-zinc-900/5"
                 >
                   <Image src={reason.icon} alt="" width={480} height={480} className="-mt-4 -ml-4 size-48" />
-                  <h3 className="flex items-center gap-2 text-xl font-semibold">
+                  <h3 className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xl font-semibold">
                     {reason.title}
                     {reason.later && (
-                      <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500">
+                      <span className="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-zinc-500">
                         Coming later
                       </span>
                     )}
