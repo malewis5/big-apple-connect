@@ -3,7 +3,7 @@ import BoxStory from "./box-story";
 import DemoVideo from "./demo-video";
 import { SiteFooter } from "./info-page";
 import { GitHubIcon } from "./site-header";
-import { CARD, CONTAINER, SECTION_LEAD, SECTION_TITLE, SECTION_Y } from "./ui";
+import { CARD, CONTAINER, SECTION_BODY, SECTION_BOTTOM, SECTION_LEAD, SECTION_TITLE, SECTION_Y } from "./ui";
 import {
   REPO,
   SITE_DESCRIPTION,
@@ -165,15 +165,15 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
       <main id="main" tabIndex={-1} className="outline-none">
-        <section className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center px-6 pb-20 text-center">
+        <section className="flex min-h-[calc(100svh-4.25rem)] flex-col items-center justify-center px-6 pb-16 text-center sm:pb-20">
           <p className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800">
             {hero.eyebrow}
           </p>
-          <h1 className="mt-6 w-full max-w-4xl text-5xl font-semibold tracking-tight text-balance break-words sm:text-7xl">
+          <h1 className="mt-6 w-full max-w-4xl text-[2.75rem] leading-[1.05] font-semibold tracking-tight text-balance break-words sm:text-7xl">
             {hero.title}
           </h1>
-          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-pretty text-zinc-600 sm:text-2xl">{hero.body}</p>
-          <div className="mt-16 flex flex-col items-center gap-2 text-sm text-zinc-600" aria-hidden="true">
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-zinc-600 sm:text-2xl">{hero.body}</p>
+          <div className="mt-12 flex flex-col items-center gap-2 text-sm text-zinc-600" aria-hidden="true">
             Scroll to see how it works
             <svg viewBox="0 0 20 20" className="size-5 motion-safe:animate-bounce motion-safe:[animation-iteration-count:3]" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M5 8l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
@@ -189,13 +189,13 @@ export default function Home() {
           <div className={CONTAINER}>
             <h2 className={SECTION_TITLE}>{whyItMatters.title}</h2>
             <p className={SECTION_LEAD}>{whyItMatters.body}</p>
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <div className={`${SECTION_BODY} grid gap-4 sm:gap-6 md:grid-cols-3`}>
               {whyItMatters.reasons.map((reason) => (
                 <div
                   key={reason.title}
-                  className={`min-w-0 p-8 break-words ${CARD}`}
+                  className={`min-w-0 p-6 break-words sm:p-8 ${CARD}`}
                 >
-                  <Image src={reason.icon} alt="" width={480} height={480} className="-mt-4 -ml-4 size-48 max-w-full" />
+                  <Image src={reason.icon} alt="" width={480} height={480} className="-mt-3 -ml-3 size-32 max-w-full sm:-mt-4 sm:-ml-4 sm:size-48" />
                   <h3 className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xl font-semibold">
                     {reason.title}
                     {reason.later && (
@@ -204,7 +204,7 @@ export default function Home() {
                       </span>
                     )}
                   </h3>
-                  <p className="mt-3 text-lg leading-relaxed text-zinc-600">{reason.body}</p>
+                  <p className="mt-2 text-lg leading-relaxed text-zinc-600 sm:mt-3">{reason.body}</p>
                 </div>
               ))}
             </div>
@@ -212,16 +212,16 @@ export default function Home() {
         </section>
 
         {/* Part of "Why it matters" above, so it follows on without a full gap. */}
-        <section className="bg-zinc-50 pb-24 sm:pb-32">
+        <section className={`bg-zinc-50 ${SECTION_BOTTOM}`}>
           <div className={CONTAINER}>
-            <div className={`p-8 sm:p-12 lg:flex lg:items-center lg:justify-between lg:gap-12 ${CARD}`}>
+            <div className={`p-6 sm:p-12 lg:flex lg:items-center lg:justify-between lg:gap-12 ${CARD}`}>
               <div>
                 <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{status.title}</h2>
                 <p className="mt-4 max-w-2xl text-lg leading-relaxed text-pretty text-zinc-600">{status.body}</p>
               </div>
               <a
                 href={REPO}
-                className="mt-8 inline-flex shrink-0 items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-700 lg:mt-0"
+                className="mt-6 flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-700 sm:mt-8 sm:inline-flex sm:w-auto lg:mt-0"
               >
                 <GitHubIcon className="size-4" />
                 See the project on GitHub
@@ -230,13 +230,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="faq" className="bg-zinc-50 pb-24 sm:pb-32">
+        <section id="faq" className={`bg-zinc-50 ${SECTION_BOTTOM}`}>
           <div className={`${CONTAINER} lg:grid lg:grid-cols-[1fr_2fr] lg:items-start lg:gap-16`}>
             <h2 className={SECTION_TITLE}>Questions and answers</h2>
-            <div className="mt-10 divide-y divide-zinc-900/10 border-y border-zinc-900/10 lg:mt-0">
+            <div className="mt-8 divide-y divide-zinc-900/10 border-y border-zinc-900/10 lg:mt-0">
               {faqs.map((faq) => (
                 <details key={faq.question} className="group">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-semibold [&::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-lg font-semibold sm:py-6 [&::-webkit-details-marker]:hidden">
                     <h3>{faq.question}</h3>
                     <svg
                       viewBox="0 0 20 20"
@@ -249,7 +249,7 @@ export default function Home() {
                       <path d="M5 8l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </summary>
-                  <p className="-mt-3 max-w-2xl pb-6 text-lg leading-relaxed text-zinc-600">{faq.answer}</p>
+                  <p className="-mt-2 max-w-2xl pb-5 text-lg sm:-mt-3 sm:pb-6 leading-relaxed text-zinc-600">{faq.answer}</p>
                 </details>
               ))}
             </div>

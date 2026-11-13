@@ -38,7 +38,7 @@ const STILL_CSS = `
 #story { height: auto !important; }
 #story [data-pin] { position: static !important; height: auto !important; overflow: visible !important; }
 #story [data-layout] { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 2rem !important; height: auto !important; padding-block: 4rem !important; }
-#story [data-stage] { order: 0 !important; flex: none !important; width: 100% !important; height: min(100vw - 3rem, 22rem) !important; }
+#story [data-stage] { order: 0 !important; flex: none !important; width: 100% !important; margin-inline: 0 !important; height: min(100vw - 3rem, 22rem) !important; }
 #story [data-picture] { max-width: none !important; }
 #story [data-text] { order: 1 !important; }
 #story [data-captions] { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)) !important; gap: 2.5rem !important; }
@@ -245,14 +245,16 @@ export default function BoxStory() {
     </noscript>
     <section id="story" ref={section} className="relative h-[600vh]" aria-label="How the box comes together">
       <div ref={pinned} data-pin className="sticky top-0 h-svh overflow-hidden">
-        {/* On a phone the picture sits above the words and gives up height
-            when the words need it (large text, wide spacing), so they never
-            overlap. On a wide screen they sit side by side. */}
+        {/* On a phone the picture sits above the words, edge to edge, and
+            gives up height when the words need it (large text, wide spacing),
+            so they never overlap. The progress bars sit between the two, and
+            each step's words start at the same line, so the eye stays put as
+            they change. On a wide screen they sit side by side. */}
         <div
           data-layout
           className="mx-auto flex h-full w-full max-w-6xl flex-col justify-center gap-4 px-6 py-6 lg:grid lg:grid-cols-[1fr_1.25fr] lg:items-center lg:gap-12 lg:py-0"
         >
-          <div data-text className="order-2 shrink-0 lg:order-1">
+          <div data-text className="order-2 flex shrink-0 flex-col lg:order-1 lg:block">
           {/* Every caption shares one grid cell, so the cell is as tall as the
               longest and the words stay in the page's flow. */}
           <div data-captions className="grid">
@@ -265,7 +267,7 @@ export default function BoxStory() {
                 data-caption
                 // Prepaint sets its style before React loads.
                 suppressHydrationWarning
-                className="col-start-1 row-start-1 self-end opacity-0 will-change-transform"
+                className="col-start-1 row-start-1 self-start opacity-0 will-change-transform lg:self-end"
               >
                 <p className="text-sm font-medium uppercase tracking-widest text-emerald-800">
                   Step {k + 1}
@@ -277,7 +279,7 @@ export default function BoxStory() {
               </div>
             ))}
           </div>
-          <div data-bars className="mt-8 flex gap-2" aria-hidden="true">
+          <div data-bars className="order-first mb-6 flex gap-2 lg:order-none lg:mt-8 lg:mb-0" aria-hidden="true">
             {steps.map((step, k) => (
               <span key={step.title} className="h-1 w-10 overflow-hidden rounded-full bg-zinc-200">
                 <span
@@ -297,7 +299,7 @@ export default function BoxStory() {
               that fits in it (cqw and cqh are this box's width and height). */}
           <div
             data-stage
-            className="order-1 flex min-h-0 shrink grow-0 basis-[min(60svh,calc(100vw-3rem))] items-center justify-center [container-type:size] lg:order-2 lg:h-full"
+            className="order-1 -mx-6 flex min-h-0 shrink grow-0 basis-[min(58svh,100vw)] items-center justify-center [container-type:size] lg:order-2 lg:mx-0 lg:h-full"
           >
           <div
             data-picture
@@ -310,7 +312,7 @@ export default function BoxStory() {
               <img
                 src={POSTER_SRC}
                 srcSet={POSTER_SRCSET}
-                sizes="(min-width: 1024px) min(80svh, 55vw), min(100vw - 3rem, 60svh)"
+                sizes="(min-width: 1024px) min(80svh, 55vw), min(100vw, 58svh)"
                 alt=""
                 className="absolute inset-0 size-full"
               />

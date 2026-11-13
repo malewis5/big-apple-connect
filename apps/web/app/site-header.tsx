@@ -21,17 +21,20 @@ export function SiteHeader() {
       >
         Skip to main content
       </a>
-      <header className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-3 text-zinc-900">
-        <Link href="/" className="flex min-h-11 items-center gap-2.5 text-sm font-semibold tracking-tight">
-          <span className="size-2.5 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgb(16_185_129/0.15)]" />
+      {/* One row at every width: on a phone the link says just "GitHub", so
+          it sits beside the site name instead of dropping under it. */}
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-3 text-zinc-900">
+        <Link href="/" className="flex min-h-11 min-w-0 items-center gap-2.5 text-sm font-semibold tracking-tight">
+          <span className="size-2.5 shrink-0 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgb(16_185_129/0.15)]" />
           {SITE_NAME}
         </Link>
         <a
           href={REPO}
-          className="flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-zinc-700 ring-1 ring-zinc-900/10 transition hover:bg-zinc-50 hover:text-zinc-900"
+          className="flex min-h-11 shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-zinc-700 ring-1 ring-zinc-900/10 transition hover:bg-zinc-50 hover:text-zinc-900"
         >
           <GitHubIcon className="size-4" />
-          View on GitHub
+          <span className="sm:hidden">GitHub</span>
+          <span className="hidden sm:inline">View on GitHub</span>
         </a>
       </header>
     </>

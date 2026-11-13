@@ -7,12 +7,18 @@
 // the site name does.
 export const CONTAINER = "mx-auto w-full max-w-6xl px-6";
 
-// Space above and below a section.
-export const SECTION_Y = "py-24 sm:py-32";
+// Space above and below a section. Tighter on a phone, where a desktop-sized
+// gap is most of a screen of nothing.
+export const SECTION_Y = "py-16 sm:py-32";
+// The same space for a section that follows on from the one above it.
+export const SECTION_BOTTOM = "pb-16 sm:pb-32";
 
 // A section's heading and the paragraph under it.
 export const SECTION_TITLE = "text-4xl font-semibold tracking-tight text-balance sm:text-5xl";
-export const SECTION_LEAD = "mt-4 max-w-2xl text-xl leading-relaxed text-pretty text-zinc-600";
+export const SECTION_LEAD = "mt-4 max-w-2xl text-lg leading-relaxed text-pretty text-zinc-600 sm:text-xl";
+
+// Space between a section's words and what comes under them.
+export const SECTION_BODY = "mt-8 sm:mt-12";
 
 // White cards on the page: the "Why it matters" reasons, the video and the
 // project's status.
