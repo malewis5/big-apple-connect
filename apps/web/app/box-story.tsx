@@ -1,10 +1,22 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Component, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
 // WebGL runs only in the browser, so the scene skips server rendering.
 const BoxScene = dynamic(() => import("./box-scene"), { ssr: false });
+
+class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
 
 // The model's motion, from design/box/build_box.py, runs over 180 frames.
 const FRAMES = 180;
@@ -154,7 +166,9 @@ export default function BoxStory() {
             className={`order-1 mx-auto aspect-square w-full max-w-[min(100%,60svh)] transition-opacity duration-700 lg:order-2 lg:max-w-[min(100%,80svh)] ${ready ? "opacity-100" : "opacity-0"}`}
             style={edgeFade}
           >
-            <BoxScene frame={frame} onInvalidate={onInvalidate} onReady={onReady} />
+            <SceneBoundary>
+              <BoxScene frame={frame} onInvalidate={onInvalidate} onReady={onReady} />
+            </SceneBoundary>
           </div>
         </div>
       </div>
