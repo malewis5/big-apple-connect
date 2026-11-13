@@ -1,10 +1,31 @@
 import Image from "next/image";
 import BoxStory from "./box-story";
 import { SiteFooter } from "./info-page";
-import { REPO, SITE_DESCRIPTION, SITE_NAME, SITE_URL, faqs, hero, status, whyItMatters } from "./site";
+import {
+  REPO,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_URL,
+  faqs,
+  hero,
+  status,
+  storySteps,
+  whyItMatters,
+} from "./site";
 
-// Structured data for search engines and AI answer engines. The FAQ entries
-// are the same ones shown on the page, as Google requires.
+// The maker's own public profiles. They tell search engines and AI answer
+// engines which Matt Lewis this is. Each one is a profile he links to from
+// his GitHub page or his own website. Only list a profile that really exists.
+const AUTHOR_PROFILES = [
+  "https://github.com/malewis5",
+  "https://www.linkedin.com/in/malewis5",
+  "https://twitter.com/mttlws",
+  "https://www.mattech.fyi",
+];
+
+// Structured data for search engines and AI answer engines. Every entry
+// describes something the page shows, in the same words, as Google requires.
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -18,12 +39,29 @@ const jsonLd = {
       publisher: { "@id": `${SITE_URL}/#author` },
     },
     {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/#webpage`,
+      url: SITE_URL,
+      name: SITE_TITLE,
+      headline: hero.title,
+      description: hero.body,
+      inLanguage: "en-US",
+      isPartOf: { "@id": `${SITE_URL}/#website` },
+      about: { "@id": `${SITE_URL}/#software` },
+      author: { "@id": `${SITE_URL}/#author` },
+      hasPart: [
+        { "@id": `${SITE_URL}/#how-it-works` },
+        { "@id": `${SITE_URL}/#why-it-matters` },
+        { "@id": `${SITE_URL}/#faq` },
+      ],
+    },
+    {
       "@type": "Person",
       "@id": `${SITE_URL}/#author`,
       name: "Matt Lewis",
       description: `Maker and maintainer of the ${SITE_NAME}. It is an independent, open-source project that measures home internet for NYCHA residents.`,
       url: "https://github.com/malewis5",
-      sameAs: ["https://github.com/malewis5"],
+      sameAs: AUTHOR_PROFILES,
     },
     {
       "@type": "SoftwareApplication",
@@ -39,10 +77,38 @@ const jsonLd = {
       codeRepository: REPO,
       downloadUrl: `${REPO}/releases/latest`,
       author: { "@id": `${SITE_URL}/#author` },
+      url: SITE_URL,
+      sameAs: [REPO],
       audience: {
         "@type": "Audience",
         audienceType: "NYCHA residents and New York City public housing households",
       },
+    },
+    // The four steps of the scrolling story.
+    {
+      "@type": "HowTo",
+      "@id": `${SITE_URL}/#how-it-works`,
+      name: `How the ${SITE_NAME} works`,
+      description: hero.body,
+      step: storySteps.map((step, k) => ({
+        "@type": "HowToStep",
+        position: k + 1,
+        name: step.title,
+        text: step.body,
+      })),
+    },
+    // The three cards under "Why it matters".
+    {
+      "@type": "ItemList",
+      "@id": `${SITE_URL}/#why-it-matters`,
+      name: whyItMatters.title,
+      description: whyItMatters.body,
+      itemListElement: whyItMatters.reasons.map((reason, k) => ({
+        "@type": "ListItem",
+        position: k + 1,
+        name: reason.title,
+        description: reason.body,
+      })),
     },
     {
       "@type": "FAQPage",
