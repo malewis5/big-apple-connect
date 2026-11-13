@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { SITE_NAME, demoVideo, hero } from "./site";
+import { demoVideo } from "./site";
 import { CARD, CONTAINER, SECTION_LEAD, SECTION_TITLE, SECTION_Y } from "./ui";
 
 // AV1 at 1080p is the smallest, for browsers that can play it; H.264 at 720p
@@ -179,31 +179,19 @@ export default function DemoVideo() {
               {caption || "\u00a0"}
             </p>
           </div>
-          {/* The end: like the end card in the shared copies, a soft cream
-              wash with the site's question and a way to play it again. The
-              player's own controls hide meanwhile, so their dark bar doesn't
-              cut across it. */}
+          {/* At the end, one light button over the last frame, like the
+              caption pills. The player's dark controls hide meanwhile. */}
           {ended && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-[3cqw] bg-[#FBF8F3]/85 px-[6%] text-center backdrop-blur-sm">
-              <p className="flex items-center gap-2.5 text-[max(0.75rem,1.6cqw)] font-semibold text-zinc-600">
-                <span
-                  aria-hidden="true"
-                  className="size-2.5 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgb(16_185_129/0.15)]"
-                />
-                {SITE_NAME}
-              </p>
-              <p className="text-[max(1.25rem,4.2cqw)] leading-tight font-semibold tracking-tight text-balance text-zinc-900">
-                {hero.title}
-              </p>
+            <div className="absolute inset-0 flex items-center justify-center">
               <button
                 type="button"
                 onClick={playAgain}
-                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-zinc-900 shadow-sm ring-1 ring-zinc-900/10 transition hover:bg-zinc-50"
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/95 px-5 py-2.5 text-sm font-medium text-zinc-900 shadow-sm ring-1 ring-zinc-900/10 transition hover:bg-white"
               >
                 <svg
                   viewBox="0 0 20 20"
                   aria-hidden="true"
-                  className="size-4 text-emerald-600"
+                  className="size-4"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.75"
