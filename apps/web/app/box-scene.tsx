@@ -38,7 +38,7 @@ export default function BoxScene({ frame, onInvalidate, onReady }: Props) {
   // Phones get a lighter scene: fewer pixels, a smaller shadow map and no
   // contact-hardening shadows. If frames still drop, the resolution falls.
   const [phone] = useState(() => window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0);
-  const [dpr, setDpr] = useState(phone ? 1.5 : 2);
+  const [dpr, setDpr] = useState<number | [number, number]>([1, phone ? 1.5 : 2]);
   return (
     <Canvas
       orthographic
