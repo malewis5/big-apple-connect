@@ -1,25 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { Component, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { FRAMES, FramePlayer, POSTER_SRC, POSTER_SRCSET } from "./frame-player";
 
-// WebGL runs only in the browser, so the scene skips server rendering.
-const BoxScene = dynamic(() => import("./box-scene"), { ssr: false });
-
-class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
-
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-
-  render() {
-    return this.state.failed ? null : this.props.children;
-  }
-}
-
-// The model's motion, from design/box/build_box.py, runs over 180 frames.
-const FRAMES = 180;
+// The box's motion, from design/box/build_box.py, runs over 180 frames,
+// pre-rendered by scripts/build-frames.mjs.
 const FADE = 8; // frames over which a caption fades in or out
 
 type Step = { from: number; to: number; title: string; body: string };
@@ -60,63 +45,186 @@ function clamp(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
-function visibility(frame: number, step: Step) {
-  return Math.min(clamp((frame - step.from) / FADE), clamp((step.to - frame) / FADE));
+type Layout = { ranges: number[][]; starts: number[]; fade: number; frames: number };
+const LAYOUT: Layout = {
+  ranges: steps.map((step) => [step.from, Math.min(step.to, 1e9)]),
+  starts: STARTS,
+  fade: FADE,
+  frames: FRAMES,
+};
+
+// Show the captions and fill the progress bars for a frame. It also runs as
+// an inline script before React loads (see Prepaint), so it must not use
+// anything from outside itself.
+function paintText(frame: number, captions: ArrayLike<HTMLElement | null>, bars: ArrayLike<HTMLElement | null>, layout: Layout) {
+  const unit = (value: number) => Math.min(1, Math.max(0, value));
+  for (let k = 0; k < captions.length; k++) {
+    const caption = captions[k];
+    if (!caption) continue;
+    const [from, to] = layout.ranges[k];
+    const v = Math.min(unit((frame - from) / layout.fade), unit((to - frame) / layout.fade));
+    caption.style.opacity = String(v);
+    caption.style.transform = `translate3d(0, ${(1 - v) * 24}px, 0)`;
+  }
+  for (let k = 0; k < bars.length; k++) {
+    const bar = bars[k];
+    const { starts } = layout;
+    if (bar) bar.style.transform = `scaleX(${unit((frame - starts[k]) / (starts[k + 1] - starts[k]))})`;
+  }
 }
+
+declare global {
+  interface Window {
+    storyPrepaint?: () => void;
+  }
+}
+
+// The page is prerendered with every caption hidden. Reloaded halfway down,
+// that would paint the wrong captions until React loads, then snap. This
+// runs during parsing, before the first paint, and keeps the captions in step
+// with the scroll (browsers may restore it late) until React takes over.
+// Like paintText, it must not use anything from outside itself.
+function prepaint(layout: Layout, paint: typeof paintText) {
+  const section = document.getElementById("story");
+  const pin = section?.querySelector<HTMLElement>("[data-pin]");
+  if (!section || !pin) return;
+  const captions = section.querySelectorAll<HTMLElement>("[data-caption]");
+  const bars = section.querySelectorAll<HTMLElement>("[data-bar]");
+  const update = () => {
+    const top = section.getBoundingClientRect().top + window.scrollY;
+    const scrollable = Math.max(1, section.offsetHeight - pin.offsetHeight);
+    const progress = Math.min(1, Math.max(0, (window.scrollY - top) / scrollable));
+    paint(progress * (layout.frames - 1), captions, bars, layout);
+  };
+  update();
+  window.addEventListener("scroll", update, { passive: true });
+  window.storyPrepaint = update;
+}
+
+function Prepaint() {
+  return (
+    <script
+      dangerouslySetInnerHTML={{ __html: `(${prepaint})(${JSON.stringify(LAYOUT)}, ${paintText})` }}
+    />
+  );
+}
+
+// How quickly the story catches up with the scroll position, per second.
+// Easing smooths out mouse-wheel steps and the uneven scroll updates some
+// phones send, without feeling detached from the finger.
+const EASE = 12;
+// A bigger jump than this in one step comes from the browser restoring the
+// scroll position on reload, or a link; go straight there instead of
+// playing the animation to catch up.
+const JUMP = 24;
 
 export default function BoxStory() {
   const section = useRef<HTMLElement>(null);
+  const pinned = useRef<HTMLDivElement>(null);
   const captions = useRef<(HTMLDivElement | null)[]>([]);
   const bars = useRef<(HTMLSpanElement | null)[]>([]);
-  const frame = useRef(0);
-  const redraw = useRef<() => void>(() => {});
-  const [ready, setReady] = useState(false);
-
-  const onInvalidate = useCallback((fn: () => void) => {
-    redraw.current = fn;
-    fn();
-  }, []);
-  const onReady = useCallback(() => setReady(true), []);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const frame = useRef(0); // the frame on screen, easing toward the scroll position
 
   useEffect(() => {
+    const el = section.current;
+    const pin = pinned.current;
+    const screen = canvas.current;
+    if (!el || !pin || !screen) return;
+    let top = 0;
+    let scrollable = 1;
     let raf = 0;
+    let last = 0;
+    let dirty = true;
+    const player = new FramePlayer(screen, () => {
+      dirty = true; // a frame finished decoding; redraw with it
+    });
 
-    function update() {
-      raf = 0;
-      const el = section.current;
-      if (!el) return;
-      const scrollable = el.offsetHeight - window.innerHeight;
-      const progress = clamp(-el.getBoundingClientRect().top / scrollable);
-      frame.current = progress * (FRAMES - 1);
-      redraw.current();
-      captions.current.forEach((caption, k) => {
-        if (!caption) return;
-        const v = visibility(frame.current, steps[k]);
-        caption.style.opacity = String(v);
-        caption.style.transform = `translateY(${(1 - v) * 24}px)`;
-      });
-      bars.current.forEach((bar, k) => {
-        if (bar) bar.style.transform = `scaleX(${clamp((frame.current - STARTS[k]) / (STARTS[k + 1] - STARTS[k]))})`;
-      });
+    // Layout is read only when it changes, never per frame. The pinned box is
+    // sized in svh, so mobile toolbars showing and hiding don't move the story.
+    function measure() {
+      top = el!.getBoundingClientRect().top + window.scrollY;
+      scrollable = Math.max(1, el!.offsetHeight - pin!.offsetHeight);
+      dirty = true;
     }
 
-    function schedule() {
-      if (!raf) raf = requestAnimationFrame(update);
+    function goal() {
+      return clamp((window.scrollY - top) / scrollable) * (FRAMES - 1);
     }
 
-    update();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    return () => {
+    function paint(f: number) {
+      paintText(f, captions.current, bars.current, LAYOUT);
+      player.draw(f);
+      if (player.hasDrawn) screen!.style.opacity = "1";
+    }
+
+    // One loop drives the captions, the progress bars and the 3D scene, so
+    // they all move together in the same frame as the scroll.
+    function tick(now: number) {
+      raf = requestAnimationFrame(tick);
+      const target = goal();
+      const dt = last ? Math.min(0.1, (now - last) / 1000) : 0;
+      last = now;
+      let f = frame.current + (target - frame.current) * (1 - Math.exp(-dt * EASE));
+      if (Math.abs(target - frame.current) > JUMP) {
+        f = target;
+        player.prioritize(f);
+      } else if (Math.abs(target - f) < 0.005) f = target;
+      if (f === frame.current && !dirty) return;
+      dirty = false;
+      frame.current = f;
+      paint(f);
+    }
+
+    function start() {
+      if (raf) return;
+      measure();
+      frame.current = goal(); // arrive in place, don't animate from a stale spot
+      player.load(frame.current); // on screen already, so don't wait for the page to finish loading
+      last = 0;
+      raf = requestAnimationFrame(tick);
+    }
+
+    function stop() {
       cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      raf = 0;
+    }
+
+    // Take over from the inline script.
+    if (window.storyPrepaint) window.removeEventListener("scroll", window.storyPrepaint);
+    measure();
+    frame.current = goal();
+    paint(frame.current);
+
+    // Download frames once the rest of the page has loaded, so they never
+    // compete with the first screen.
+    const load = () => player.load(frame.current);
+    if (document.readyState === "complete") load();
+    else window.addEventListener("load", load, { once: true });
+
+    // Only run while the story is on screen.
+    const visible = new IntersectionObserver(([entry]) => (entry.isIntersecting ? start() : stop()), {
+      rootMargin: "50% 0px",
+    });
+    visible.observe(el);
+    const resized = new ResizeObserver(measure);
+    resized.observe(el);
+    resized.observe(document.body);
+    window.addEventListener("resize", measure);
+    return () => {
+      stop();
+      player.dispose();
+      window.removeEventListener("load", load);
+      visible.disconnect();
+      resized.disconnect();
+      window.removeEventListener("resize", measure);
     };
   }, []);
 
   return (
-    <section ref={section} className="relative h-[600vh]" aria-label="How the box comes together">
-      <div className="sticky top-0 flex h-svh items-center overflow-hidden">
+    <>
+    <section id="story" ref={section} className="relative h-[600vh]" aria-label="How the box comes together">
+      <div ref={pinned} data-pin className="sticky top-0 flex h-svh items-center overflow-hidden">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-4 px-6 lg:grid-cols-[1fr_1.25fr] lg:gap-12">
           <div className="order-2 lg:order-1">
           <div className="relative h-48 lg:h-72">
@@ -126,6 +234,9 @@ export default function BoxStory() {
                 ref={(el) => {
                   captions.current[k] = el;
                 }}
+                data-caption
+                // Prepaint sets its style before React loads.
+                suppressHydrationWarning
                 className="absolute inset-x-0 bottom-0 opacity-0 will-change-transform"
               >
                 <p className="text-sm font-medium uppercase tracking-widest text-emerald-600">
@@ -145,6 +256,8 @@ export default function BoxStory() {
                   ref={(el) => {
                     bars.current[k] = el;
                   }}
+                  data-bar
+                  suppressHydrationWarning
                   className="block h-full origin-left rounded-full bg-emerald-500"
                   style={{ transform: "scaleX(0)" }}
                 />
@@ -155,24 +268,26 @@ export default function BoxStory() {
           <div
             role="img"
             aria-label="A small Raspberry Pi computer is closed inside a white box. An internet cable and a power cable plug in, and a green light turns on."
-            className={`relative order-1 mx-auto aspect-square w-full max-w-[min(100%,60svh)] transition-opacity duration-700 lg:order-2 lg:max-w-[min(100%,80svh)] ${ready ? "opacity-100" : "opacity-0"}`}
+            className="relative order-1 mx-auto aspect-square w-full max-w-[min(100%,60svh)] lg:order-2 lg:max-w-[min(100%,80svh)]"
           >
-            <SceneBoundary>
-              <BoxScene frame={frame} onInvalidate={onInvalidate} onReady={onReady} />
-            </SceneBoundary>
-            {/* Fade the edges into the white page so the arriving case and the
-                cables never meet a hard border. Static white gradients, not a
-                CSS mask: a mask over a canvas that redraws every frame is slow
-                to composite on iOS. */}
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-              <div className="absolute inset-x-0 top-0 h-[10%] bg-gradient-to-b from-white" />
-              <div className="absolute inset-x-0 bottom-0 h-[10%] bg-gradient-to-t from-white" />
-              <div className="absolute inset-y-0 left-0 w-[10%] bg-gradient-to-r from-white" />
-              <div className="absolute inset-y-0 right-0 w-[10%] bg-gradient-to-l from-white" />
-            </div>
+            <noscript>
+              {/* eslint-disable-next-line @next/next/no-img-element -- frames are pre-sized; the optimizer adds nothing */}
+              <img
+                src={POSTER_SRC}
+                srcSet={POSTER_SRCSET}
+                sizes="(min-width: 1024px) min(80svh, 55vw), min(100vw - 3rem, 60svh)"
+                alt=""
+                className="absolute inset-0 size-full"
+              />
+            </noscript>
+            {/* Fades in once it has the right frame, so a reload mid-story
+                never flashes the wrong one. */}
+            <canvas ref={canvas} className="absolute inset-0 size-full opacity-0 transition-opacity duration-300" />
           </div>
         </div>
       </div>
     </section>
+    <Prepaint />
+    </>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { ContactShadows, Environment, Lightformer, PerformanceMonitor, SoftShadows, useGLTF } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer, SoftShadows, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { type RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { type RefObject, useEffect, useLayoutEffect, useRef } from "react";
 import {
   AnimationMixer,
   Color,
@@ -12,7 +12,6 @@ import {
   type MeshStandardMaterial,
   MeshDepthMaterial,
   NeutralToneMapping,
-  type Object3D,
   Vector3,
 } from "three";
 
@@ -29,40 +28,47 @@ const LIGHT_OFF = new Color("#fbfaf8"); // unlit: case-white, invisible until it
 const LIGHT_GREEN = new Color("#22c55e");
 
 type Props = {
-  frame: RefObject<number>; // fractional animation frame, 0 to 179
-  onInvalidate: (redraw: () => void) => void;
+  frame: RefObject<number>; // animation frame, 0 to 179
+  size: number; // canvas size in CSS pixels
+  onRenderer: (render: () => void) => void;
   onReady: () => void;
 };
 
-export default function BoxScene({ frame, onInvalidate, onReady }: Props) {
-  // Phones get a lighter scene: fewer pixels, a smaller shadow map and no
-  // contact-hardening shadows. If frames still drop, the resolution falls.
-  const [phone] = useState(() => window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0);
-  const [dpr, setDpr] = useState<number | [number, number]>([1, phone ? 1.5 : 2]);
+// Rendered offline, two pixels per CSS pixel, so build-frames.mjs can scale
+// it down for clean edges.
+const DPR = 2;
+
+// The scene is only rendered here, at the highest quality, to make the
+// image frames the website plays (see scripts/build-frames.mjs). Visitors
+// never run it, so there is no need to spare the GPU.
+export default function BoxScene({ frame, size, onRenderer, onReady }: Props) {
   return (
     <Canvas
       orthographic
       shadows
       frameloop="demand"
-      dpr={dpr}
-      gl={{ antialias: true, alpha: true }}
+      dpr={DPR}
+      style={{ width: size, height: size }}
+      gl={{ antialias: true, alpha: true, preserveDrawingBuffer: true }}
       camera={{ position: TARGET.clone().add(new Vector3(1, 1, 1)), near: 0.01, far: 10 }}
       onCreated={({ gl }) => {
+        // Keep the clear transparent: ContactShadows renders into a target
+        // cleared with this color, and an opaque clear tints the whole
+        // ground. build-frames.mjs puts the frames on white.
         // Neutral keeps white white; AgX would gray it.
         gl.toneMapping = NeutralToneMapping;
         gl.toneMappingExposure = 1.05;
       }}
     >
-      <PerformanceMonitor onDecline={() => setDpr(1)} />
       <Isometric />
-      <Redraw onInvalidate={onInvalidate} />
-      <Lighting phone={phone} />
+      <Renderer onRenderer={onRenderer} />
+      <Lighting />
       <Box frame={frame} onReady={onReady} />
       {/* Nudged toward the viewer so the shadow shows past the base. */}
       <ContactShadows
         position={[0.004, 0.0002, 0.006]}
         scale={0.3}
-        resolution={phone ? 256 : 512}
+        resolution={1024}
         blur={3.2}
         far={0.05}
         opacity={0.6}
@@ -85,10 +91,10 @@ function Isometric() {
   return null;
 }
 
-// Hand the parent a way to request a redraw when the scroll position changes.
-function Redraw({ onInvalidate }: Pick<Props, "onInvalidate">) {
-  const invalidate = useThree((state) => state.invalidate);
-  useEffect(() => onInvalidate(invalidate), [invalidate, onInvalidate]);
+// Hand the parent a way to draw the current frame right now.
+function Renderer({ onRenderer }: Pick<Props, "onRenderer">) {
+  const get = useThree((state) => state.get);
+  useEffect(() => onRenderer(() => get().advance(performance.now() / 1000)), [get, onRenderer]);
   return null;
 }
 
@@ -96,13 +102,12 @@ function Redraw({ onInvalidate }: Pick<Props, "onInvalidate">) {
 // top brightest, the front face (screen left) lit, the end (screen right) in
 // shade. The environment is built from local light panels, so nothing is
 // downloaded.
-function Lighting({ phone }: { phone: boolean }) {
+function Lighting() {
   return (
     <>
       <ambientLight intensity={0.15} />
-      {/* Soft shadows let parts shade the board and the case shade the ground.
-          The contact-hardening filter costs too much on phones. */}
-      {!phone && <SoftShadows size={26} samples={16} focus={0.4} />}
+      {/* Soft shadows let parts shade the board and the case shade the ground. */}
+      <SoftShadows size={26} samples={16} focus={0.4} />
       {/* Soft neutral light from the top left of the frame, with a sky-to-ground
           fill so shaded sides stay gentle. */}
       <hemisphereLight args={["#ffffff", "#e9e4dc", 0.55]} />
@@ -110,7 +115,7 @@ function Lighting({ phone }: { phone: boolean }) {
         position={[-0.2, 0.6, 0.22]}
         intensity={1.9}
         castShadow
-        shadow-mapSize={phone ? [1024, 1024] : [4096, 4096]}
+        shadow-mapSize={[4096, 4096]}
         shadow-camera-left={-0.11}
         shadow-camera-right={0.11}
         shadow-camera-top={0.11}
@@ -163,15 +168,7 @@ function smoothstep(value: number) {
 
 function Box({ frame, onReady }: Pick<Props, "frame" | "onReady">) {
   const { scene, animations } = useGLTF(MODEL, false);
-  const rig = useRef<{
-    mixer: AnimationMixer;
-    light: MeshStandardMaterial | null;
-    shell: Object3D | null;
-    shellMaterials: Material[];
-    shellShadow: MeshDepthMaterial;
-    end: number;
-  } | null>(null);
-  const shown = useRef<number | null>(null); // the frame on screen, easing toward the scroll position
+  const pose = useRef<((f: number) => void) | null>(null);
 
   // Set up the motion and the materials once the model has loaded. three.js
   // objects are mutable by design, so they live in a ref, not in render.
@@ -236,41 +233,35 @@ function Box({ frame, onReady }: Pick<Props, "frame" | "onReady">) {
         }
       }
     });
-    rig.current = { mixer, light, shell, shellMaterials, shellShadow, end };
+    const fading = [...shellMaterials, shellShadow];
+    const setPose = (f: number) => {
+      // Clips loop, so a time exactly at the end would jump back to the start.
+      mixer.setTime(Math.min((f + 1) / FPS, end - 0.001));
+      // Ease the shell and its shadow in together as it starts to drop.
+      const fade = smoothstep((f - SHELL_FADE[0]) / (SHELL_FADE[1] - SHELL_FADE[0]));
+      if (shell) shell.visible = fade > 0;
+      fadeMaterials(fading, fade);
+
+      const on = clamp((f - LIGHT_ON[0]) / (LIGHT_ON[1] - LIGHT_ON[0]));
+      if (light) {
+        light.color.copy(LIGHT_OFF).lerp(LIGHT_GREEN, on);
+        light.emissiveIntensity = on * 0.9;
+      }
+    };
+
+    pose.current = setPose;
     onReady();
+
     return () => {
+      pose.current = null;
       mixer.stopAllAction();
       shellShadow.dispose();
       shellMaterials.forEach((material) => material.dispose());
-      rig.current = null;
     };
   }, [scene, animations, onReady]);
 
-  useFrame((state, delta) => {
-    if (!rig.current) return;
-    const { mixer, light, shell, shellMaterials, shellShadow, end } = rig.current;
-    // Ease toward the scroll position instead of jumping to it. Phones send
-    // scroll updates unevenly, and jumps between them read as lag. The ease
-    // is time-based, so it feels the same at any frame rate.
-    const target = frame.current;
-    const previous = shown.current ?? target;
-    let f = previous + (target - previous) * (1 - Math.exp(-delta * 14));
-    if (Math.abs(target - f) < 0.01) f = target;
-    else state.invalidate(); // keep drawing until it catches up
-    shown.current = f;
-    // Clips loop, so a time exactly at the end would jump back to the start.
-    mixer.setTime(Math.min((f + 1) / FPS, end - 0.001));
-    // Ease the shell and its shadow in together as it starts to drop.
-    const fade = smoothstep((f - SHELL_FADE[0]) / (SHELL_FADE[1] - SHELL_FADE[0]));
-    if (shell) shell.visible = fade > 0;
-    fadeMaterials([...shellMaterials, shellShadow], fade);
-
-    const on = clamp((f - LIGHT_ON[0]) / (LIGHT_ON[1] - LIGHT_ON[0]));
-    if (light) {
-      light.color.copy(LIGHT_OFF).lerp(LIGHT_GREEN, on);
-      light.emissiveIntensity = on * 0.9;
-    }
-  });
+  // Pose the model for the frame being captured.
+  useFrame(() => pose.current?.(frame.current));
 
   return (
 <primitive object={scene} />
