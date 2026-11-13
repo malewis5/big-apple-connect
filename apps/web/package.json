@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "build:frames": "node scripts/build-frames.mjs"
+    "build:frames": "node scripts/build-frames.mjs",
+    "build:icons": "node scripts/build-icons.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",

@@ -1,26 +1,57 @@
 import Image from "next/image";
 import BoxStory from "./box-story";
+import { DISCLAIMER, REPO, SITE_DESCRIPTION, SITE_NAME, SITE_URL, faqs, hero, status, whyItMatters } from "./site";
 
-const REPO = "https://github.com/malewis5/big-apple-connect-box";
-
-const reasons = [
-  {
-    icon: "/icons/record.webp",
-    title: "It keeps a record",
-    body: "A speed test on your phone shows one moment. The box checks all day and all night, so slow evenings and outages get written down too.",
-  },
-  {
-    icon: "/icons/compare.webp",
-    title: "Results you can compare",
-    body: "It measures the same way as a University of Chicago study of home internet, so results from different homes and cities line up.",
-  },
-  {
-    icon: "/icons/home.webp",
-    title: "Advice for your home",
-    body: "Later, we want to turn the results into personalized recommendations to improve your home's internet.",
-    later: true,
-  },
-];
+// Structured data for search engines and AI answer engines. The FAQ entries
+// are the same ones shown on the page, as Google requires.
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      inLanguage: "en-US",
+      publisher: { "@id": `${SITE_URL}/#author` },
+    },
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#author`,
+      name: "Matt Lewis",
+      url: "https://github.com/malewis5",
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${SITE_URL}/#software`,
+      name: SITE_NAME,
+      description:
+        "Open-source program that measures home internet speed, latency and reliability around the clock and saves the results as evidence.",
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "macOS, Linux, Raspberry Pi OS",
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      license: `${REPO}/blob/main/LICENSE`,
+      codeRepository: REPO,
+      downloadUrl: `${REPO}/releases/latest`,
+      author: { "@id": `${SITE_URL}/#author` },
+      audience: {
+        "@type": "Audience",
+        audienceType: "NYCHA residents and New York City public housing households",
+      },
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${SITE_URL}/#faq`,
+      mainEntity: faqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: { "@type": "Answer", text: faq.answer },
+      })),
+    },
+  ],
+};
 
 function GitHubIcon({ className }: { className?: string }) {
   return (
@@ -33,6 +64,10 @@ function GitHubIcon({ className }: { className?: string }) {
 export default function Home() {
   return (
     <div className="flex-1 bg-white text-zinc-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
         <a href="#" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
           <span className="size-2.5 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgb(16_185_129/0.15)]" />
@@ -50,15 +85,12 @@ export default function Home() {
       <main>
         <section className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center px-6 pb-20 text-center">
           <p className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-            For homes in New York City public housing
+            {hero.eyebrow}
           </p>
           <h1 className="mt-6 max-w-4xl text-5xl font-semibold tracking-tight text-balance sm:text-7xl">
-            Is your internet as good as promised?
+            {hero.title}
           </h1>
-          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-pretty text-zinc-500 sm:text-2xl">
-            New York City promises NYCHA residents free, fast and reliable internet. We&apos;re building a small box
-            that checks that promise from inside the home, day and night.
-          </p>
+          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-pretty text-zinc-500 sm:text-2xl">{hero.body}</p>
           <div className="mt-16 flex flex-col items-center gap-2 text-sm text-zinc-400" aria-hidden="true">
             Scroll to see how it works
             <svg viewBox="0 0 20 20" className="size-5 motion-safe:animate-bounce" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -71,12 +103,10 @@ export default function Home() {
 
         <section className="bg-gradient-to-b from-white to-zinc-50 px-6 py-32">
           <div className="mx-auto max-w-6xl">
-            <h2 className="text-4xl font-semibold tracking-tight sm:text-6xl">Why it matters</h2>
-            <p className="mt-4 max-w-2xl text-xl leading-relaxed text-zinc-500">
-              Internet providers tell you how fast your connection should be. The box shows how fast it really is.
-            </p>
+            <h2 className="text-4xl font-semibold tracking-tight sm:text-6xl">{whyItMatters.title}</h2>
+            <p className="mt-4 max-w-2xl text-xl leading-relaxed text-zinc-500">{whyItMatters.body}</p>
             <div className="mt-16 grid gap-6 md:grid-cols-3">
-              {reasons.map((reason) => (
+              {whyItMatters.reasons.map((reason) => (
                 <div
                   key={reason.title}
                   className="rounded-3xl bg-white p-8 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_16px_40px_-20px_rgb(0_0_0/0.18)] ring-1 ring-zinc-900/5"
@@ -99,11 +129,8 @@ export default function Home() {
 
         <section className="bg-zinc-50 px-6 pb-32">
           <div className="mx-auto max-w-3xl rounded-3xl bg-white px-8 py-14 text-center shadow-[0_1px_2px_rgb(0_0_0/0.04),0_16px_40px_-20px_rgb(0_0_0/0.18)] ring-1 ring-zinc-900/5 sm:px-16">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Where things stand</h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-zinc-500">
-              The measuring software already runs on Mac and Linux, and we&apos;re still improving it. The box is next.
-              Everything is free and open source, so anyone can see exactly how it works.
-            </p>
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">{status.title}</h2>
+            <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-zinc-500">{status.body}</p>
             <a
               href={REPO}
               className="mt-8 inline-flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-700"
@@ -113,13 +140,36 @@ export default function Home() {
             </a>
           </div>
         </section>
+
+        <section id="faq" className="bg-zinc-50 px-6 pb-32">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Questions and answers</h2>
+            <div className="mt-10 divide-y divide-zinc-900/10 border-y border-zinc-900/10">
+              {faqs.map((faq) => (
+                <details key={faq.question} className="group py-6">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-lg font-semibold [&::-webkit-details-marker]:hidden">
+                    <h3>{faq.question}</h3>
+                    <svg
+                      viewBox="0 0 20 20"
+                      aria-hidden="true"
+                      className="size-5 shrink-0 text-zinc-400 transition group-open:rotate-180"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
+                      <path d="M5 8l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </summary>
+                  <p className="mt-3 text-lg leading-relaxed text-zinc-500">{faq.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer className="bg-zinc-50 px-6 pb-16 text-center text-sm leading-relaxed text-zinc-400">
-        <p className="mx-auto max-w-2xl">
-          An independent, personal project. It is not affiliated with, endorsed by or run by the City of New York,
-          NYCHA, or any internet provider.
-        </p>
+        <p className="mx-auto max-w-2xl">{DISCLAIMER}</p>
       </footer>
     </div>
   );

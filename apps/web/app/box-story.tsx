@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { FRAMES, FramePlayer, POSTER_SRC, POSTER_SRCSET } from "./frame-player";
+import { storySteps } from "./site";
 
 // The box's motion, from design/box/build_box.py, runs over 180 frames,
 // pre-rendered by scripts/build-frames.mjs.
@@ -11,32 +12,14 @@ type Step = { from: number; to: number; title: string; body: string };
 
 // Frame ranges follow the animation: the Pi settles (1-26), the case
 // closes (34-78), the cables plug in (92-138), the light turns on (140-150).
-const steps: Step[] = [
-  {
-    from: -FADE,
-    to: 30,
-    title: "It starts with a tiny computer.",
-    body: "A Raspberry Pi is a whole computer the size of a credit card. It costs about $35.",
-  },
-  {
-    from: 34,
-    to: 86,
-    title: "We give it a simple home.",
-    body: "A plain white case keeps it safe. It's small enough to sit right next to your router.",
-  },
-  {
-    from: 90,
-    to: 138,
-    title: "Plug it into your router.",
-    body: "One cable connects the box to your router. Plug the other into the wall for power, like a phone charger.",
-  },
-  {
-    from: 140,
-    to: Infinity,
-    title: "Then it quietly keeps watch.",
-    body: "Every five minutes it checks your connection. Every hour it runs a full speed test. Every result is saved, so you have proof.",
-  },
+// The captions live in site.ts, shared with the Markdown version of the page.
+const FRAME_RANGES = [
+  [-FADE, 30],
+  [34, 86],
+  [90, 138],
+  [140, Infinity],
 ];
+const steps: Step[] = storySteps.map((step, k) => ({ from: FRAME_RANGES[k][0], to: FRAME_RANGES[k][1], ...step }));
 
 // Where each step begins, for the progress bars. The last entry is the end.
 const STARTS = [0, 34, 90, 140, FRAMES - 1];
