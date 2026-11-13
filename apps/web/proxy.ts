@@ -1,9 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-// Content negotiation for the home page: agents that prefer Markdown get
-// /index.md from the same URL, everyone else gets the HTML page. Both answers
-// set Vary: Accept so caches keep them apart. (Under `next start`, Next replaces
-// Vary on the prerendered HTML page; the Markdown response keeps it.)
+// Content negotiation: agents that prefer Markdown get it from the same URL as
+// the HTML page, everyone else gets HTML. Both answers set Vary: Accept so
+// caches keep them apart. (Under `next start`, Next replaces Vary on the
+// prerendered HTML page; the Markdown response keeps it.)
+
+// Every page and the route that serves its Markdown version. A new page needs
+// a line here, or agents asking for Markdown are told it doesn't exist.
+const MARKDOWN_PAGES: Record<string, string> = {
+  "/": "/index.md",
+  "/about": "/about.md",
+  "/contact": "/contact.md",
+  "/privacy": "/privacy.md",
+};
 
 // The quality (q) a client gives a media type in its Accept header, from 0 to 1.
 // An exact match wins over type/* and */*. Missing means 0.
@@ -30,18 +39,27 @@ export function prefersMarkdown(accept: string | null) {
 }
 
 export function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname.replace(/(.)\/+$/, "$1");
+  const markdown = MARKDOWN_PAGES[path];
+
   if (prefersMarkdown(request.headers.get("accept"))) {
-    const response = NextResponse.rewrite(new URL("/index.md", request.url));
+    // An address with no page answers 404 in Markdown, with links to follow.
+    const response = NextResponse.rewrite(new URL(markdown ?? "/not-found.md", request.url));
     response.headers.set("Vary", "Accept");
     return response;
   }
   const response = NextResponse.next();
-  response.headers.set("Vary", "Accept");
-  // Advertise the Markdown version to clients that read headers, not HTML.
-  response.headers.set("Link", '</index.md>; rel="alternate"; type="text/markdown"');
+  if (markdown) {
+    response.headers.set("Vary", "Accept");
+    // Advertise the Markdown version to clients that read headers, not HTML.
+    response.headers.set("Link", `<${markdown}>; rel="alternate"; type="text/markdown"`);
+  }
   return response;
 }
 
+// Pages only: the home page, and every address without a dot in it. That
+// leaves out files (/llms.txt, /index.md, images), Next.js's own addresses,
+// the social image, and the capture tool that only exists under `next dev`.
 export const config = {
-  matcher: "/",
+  matcher: ["/", "/((?!_next/|_vercel/|capture|opengraph-image|.*\\.).*)"],
 };
