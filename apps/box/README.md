@@ -258,6 +258,12 @@ the next version. Merging it tags the version and publishes the release. A
 workflow then builds the program for each system from that tag, attaches the
 files and attests the build.
 
+Every release also carries `LICENSE`, `NOTICE` and `THIRD_PARTY_NOTICES.txt`.
+The last holds the license of everything compiled into the program: Go's
+standard library and each outside module. It is made from the programs
+themselves by [`scripts/third-party-notices.sh`](scripts/third-party-notices.sh),
+so it can't fall behind a dependency change.
+
 ## Tested on
 
 - **macOS:** run on macOS 27 (Apple silicon), on Wi-Fi, as an ordinary user,

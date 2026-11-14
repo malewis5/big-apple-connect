@@ -37,5 +37,5 @@ any output you paste.
 
 ## License
 
-The project is [0BSD](LICENSE). By contributing, you agree that your
+The project is [Apache-2.0](LICENSE). By contributing, you agree that your
 contribution is released under the same license.
