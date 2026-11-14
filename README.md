@@ -125,4 +125,6 @@ security problems privately, as [SECURITY.md](SECURITY.md) describes.
 
 ## License
 
-[0BSD](LICENSE). Use it for anything, with or without credit.
+[Apache-2.0](LICENSE). Use, copy, change and share it for any purpose, as long as
+you keep the copyright and license notices and say what you changed. Versions
+up to v0.0.3 were released under 0BSD.

@@ -220,7 +220,7 @@ export const infoPages: InfoPage[] = [
   {
     slug: "about",
     title: "About",
-    updated: "2026-11-13",
+    updated: "2026-11-14",
     description:
       "Who makes the Big Apple Connect Box, why it exists and how far along it is. It is an independent, open-source project that checks New York City's promise of fast, reliable internet for NYCHA residents.",
     sections: [
@@ -241,7 +241,7 @@ export const infoPages: InfoPage[] = [
         title: "Who makes it",
         paragraphs: [
           "Matt Lewis makes and maintains the project by himself in his own time, so it is an independent, personal project that is not affiliated with, endorsed by or run by the City of New York, NYCHA, or any internet provider.",
-          "Nobody pays for it and it sells nothing, and because the code is released under the 0BSD license, anyone can use, copy and change it for any purpose.",
+          "Nobody pays for it and it sells nothing. The code is released under the Apache License 2.0, so anyone can use, copy and change it for any purpose, as long as they keep its copyright and license notices.",
         ],
         links: [
           {

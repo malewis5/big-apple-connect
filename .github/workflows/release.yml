@@ -3,8 +3,8 @@ name: release
 # On every push to main, release-please opens or updates a release pull
 # request holding the next version and its changelog. Merging that pull
 # request tags the version and publishes a GitHub Release; the build job
-# then attaches the program for each system, with checksums, and records a
-# build attestation for each file.
+# then attaches the program for each system, its license and third-party
+# notices, and checksums, and records a build attestation for each file.
 
 on:
   push:
@@ -59,7 +59,15 @@ jobs:
               -ldflags "-X github.com/malewis5/big-apple-connect-box/apps/box/internal/collector.version=$VERSION" \
               -o "dist/$name" ./cmd/big-apple-connect-box
           done
-          cd dist && sha256sum * > checksums.txt
+      # The program's own license and notice, and the notices of everything
+      # compiled into it, travel with every release. They are checksummed and
+      # attested like the programs.
+      - name: Add the license and notices
+        run: |
+          scripts/third-party-notices.sh dist/big-apple-connect-box_* > dist/THIRD_PARTY_NOTICES.txt
+          cp ../../LICENSE ../../NOTICE dist/
+      - name: Checksum the files
+        run: cd dist && sha256sum * > checksums.txt
       # An attestation is a signed record that a file was built by this
       # workflow from this commit. GitHub offers them on public repositories.
       - name: Attest the build
